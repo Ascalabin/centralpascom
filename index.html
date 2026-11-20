@@ -142,8 +142,13 @@
         </button>
       </nav>
 
-      <!-- Today Liturgical Pill -->
+      <!-- Today Liturgical Pill & Cloud/Backup Button -->
       <div class="flex items-center gap-2 shrink-0">
+        <button id="btn-open-cloud-sync" title="Sincronização na nuvem (grátis) e Backup JSON" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border border-stone-200 bg-white hover:bg-stone-100 transition text-xs font-semibold text-stone-700">
+          <span id="cloud-status-dot" class="w-2 h-2 rounded-full bg-stone-400 shrink-0"></span>
+          <i data-lucide="cloud" class="w-3.5 h-3.5 text-slate-700"></i>
+          <span id="cloud-status-label" class="hidden lg:inline">Nuvem / Backup</span>
+        </button>
         <button id="btn-liturgical-today" title="Ver ou aplicar cor litúrgica de hoje na sobreposição" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-stone-200 bg-stone-50 hover:bg-stone-100 transition text-xs font-medium text-stone-700">
           <span id="today-color-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0"></span>
           <span id="today-liturgical-label" class="hidden sm:inline">Cor de hoje: Verde</span>
@@ -774,15 +779,32 @@
             </div>
           </div>
 
-          <!-- OBS Studio Native Setup Guide -->
-          <div class="bg-stone-50 rounded-2xl border border-stone-200 p-4 space-y-2">
-            <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-700 flex items-center gap-1.5">
-              <i data-lucide="tv" class="w-3.5 h-3.5 text-slate-700"></i> Como colocar nativamente no OBS Studio
-            </h4>
+          <!-- OBS Studio Local Plugin Bridge & GitHub Config -->
+          <div class="bg-stone-50 rounded-2xl border border-stone-200 p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-700 flex items-center gap-1.5">
+                <i data-lucide="plug-zap" class="w-3.5 h-3.5 text-slate-700"></i> Plugin Local do OBS Studio (via GitHub Pages)
+              </h4>
+              <span id="obs-plugin-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-stone-200 text-stone-600">
+                <span id="obs-plugin-status-dot" class="w-2 h-2 rounded-full bg-stone-400"></span>
+                <span id="obs-plugin-status-text">Plugin OBS Offline</span>
+              </span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button id="btn-obs-export-github-json" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar obs-config.json (p/ GitHub)
+              </button>
+              <button id="btn-obs-plugin-reconnect" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-100 text-stone-700 text-xs font-semibold transition">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Testar Plugin OBS
+              </button>
+              <button id="btn-obs-pull-repo-json" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-100 text-stone-700 text-xs font-semibold transition">
+                <i data-lucide="git-branch" class="w-3.5 h-3.5"></i> Recarregar do GitHub
+              </button>
+            </div>
             <ol class="text-xs text-stone-600 space-y-1 list-decimal list-inside">
-              <li>Clique em <strong>Copiar URL OBS</strong> para copiar o endereço oficial com <code>#obs</code> no final.</li>
-              <li>No OBS Studio, adicione uma fonte <strong>Navegador (Browser Source)</strong> em <strong>1920×1080</strong> com essa URL (o fundo já fica 100% transparente).</li>
-              <li>Você pode controlar os botões <strong>NO AR / OCULTAR</strong> de dentro do OBS (<strong>Painéis → Painéis Personalizados do Navegador</strong>) ou <strong>direto pelo celular/notebook</strong> — a sincronização ao vivo é automática pelo servidor!</li>
+              <li>Instale <code>pascom_obs_github.py</code> em <strong>Ferramentas → Scripts</strong> no OBS Studio e informe a URL deste site no GitHub Pages.</li>
+              <li>Com o OBS aberto neste PC, o site conecta automaticamente na ponte local (<code>127.0.0.1:47890</code>) e envia o GC ao vivo sem precisar de Firebase.</li>
+              <li>Para salvar novas configurações padrão direto no repositório, clique em <strong>Baixar obs-config.json</strong> e substitua o arquivo na raiz do GitHub — o plugin do OBS lerá automaticamente.</li>
             </ol>
           </div>
         </div>
@@ -1134,6 +1156,69 @@
     </div>
   </div>
 
+  <!-- Modal: Sincronização na Nuvem (Grátis p/ GoDrive) & Backup -->
+  <div id="modal-cloud-sync" class="hidden fixed inset-0 z-50 bg-stone-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-stone-200">
+      <div class="p-5 border-b border-stone-100 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-slate-900 text-amber-400 flex items-center justify-center shrink-0">
+            <i data-lucide="cloud" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-stone-900">Nuvem Grátis & Backup (GitHub Pages)</h3>
+            <p class="text-xs text-stone-500">Compartilhe escala, artes e controle remoto do OBS entre dispositivos.</p>
+          </div>
+        </div>
+        <button id="btn-close-cloud-modal" type="button" class="p-1.5 rounded-lg hover:bg-stone-100 text-stone-500">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-5">
+        <!-- Firebase Realtime Database (100% Free Static Cloud Sync) -->
+        <form id="form-cloud-sync" class="space-y-3 p-4 rounded-xl bg-stone-50 border border-stone-200">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-stone-700">Sincronização em Tempo Real (Firebase Grátis)</span>
+            <span id="cloud-modal-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-stone-600">Modo Local</span>
+          </div>
+          <p class="text-xs text-stone-600 leading-relaxed">
+            Como o <strong>GitHub Pages</strong> hospeda sites estáticos (sem PHP), você pode colar abaixo a URL do seu <strong>Firebase Realtime Database</strong> gratuito para sincronizar a escala, artes e o GC do OBS pelo celular em tempo real.
+          </p>
+          <div>
+            <label for="input-cloud-url" class="block text-xs font-bold text-stone-700 mb-1">URL do Firebase Realtime Database</label>
+            <input id="input-cloud-url" type="url" placeholder="https://seu-projeto-default-rtdb.firebaseio.com" class="w-full px-3 py-2 rounded-xl border border-stone-200 bg-white text-xs font-mono text-stone-800 focus:outline-none focus:ring-2 focus:ring-slate-900/20">
+          </div>
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition">
+              Conectar e Sincronizar
+            </button>
+            <button type="button" id="btn-cloud-pull-now" class="px-3 py-2 rounded-xl border border-stone-200 bg-white hover:bg-stone-100 text-xs font-semibold text-stone-700 transition">
+              Atualizar Agora
+            </button>
+            <button type="button" id="btn-cloud-disconnect" class="px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition ml-auto">
+              Desconectar
+            </button>
+          </div>
+        </form>
+
+        <!-- Manual Export / Import Backup -->
+        <div class="p-4 rounded-xl bg-white border border-stone-200 space-y-3">
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-700">Backup Rápido (Arquivo JSON)</h4>
+          <p class="text-xs text-stone-500">Salve uma cópia da escala, agentes, artes e padres para enviar no WhatsApp da equipe ou restaurar em outro aparelho.</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" id="btn-export-backup" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar Backup (.json)
+            </button>
+            <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 text-stone-700 text-xs font-bold cursor-pointer transition">
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i> Importar Backup
+              <input id="input-import-backup" type="file" accept="application/json,.json" class="hidden">
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-5 right-5 z-50 translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2.5 max-w-sm">
     <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
@@ -1171,35 +1256,35 @@
         season: 'Solenidades, Festas, Natal e Páscoa',
         dotClass: 'bg-amber-400',
         badgeClass: 'bg-amber-50 text-amber-800 border-amber-200',
-        src: "assets/overlays/amarelo.png"
+        src: "./assets/overlays/amarelo.png"
       },
       verde: {
         label: 'Verde',
         season: 'Tempo Comum',
         dotClass: 'bg-emerald-600',
         badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-        src: "assets/overlays/verde.png"
+        src: "./assets/overlays/verde.png"
       },
       roxo: {
         label: 'Roxo',
         season: 'Advento e Quaresma',
         dotClass: 'bg-purple-700',
         badgeClass: 'bg-purple-50 text-purple-800 border-purple-200',
-        src: "assets/overlays/roxo.png"
+        src: "./assets/overlays/roxo.png"
       },
       vermelho: {
         label: 'Vermelho',
         season: 'Mártires, Pentecostes e Paixão',
         dotClass: 'bg-red-600',
         badgeClass: 'bg-red-50 text-red-800 border-red-200',
-        src: "assets/overlays/vermelho.png"
+        src: "./assets/overlays/vermelho.png"
       },
       azul: {
         label: 'Azul (Mariano)',
         season: 'Festas de Nossa Senhora',
         dotClass: 'bg-indigo-600',
         badgeClass: 'bg-indigo-50 text-indigo-800 border-indigo-200',
-        src: "assets/overlays/azul.png"
+        src: "./assets/overlays/azul.png"
       }
     };
 
@@ -1354,93 +1439,139 @@
       };
     }
 
-    const API_URL = 'api.php';
-    const IS_HTTP = window.location.protocol === 'http:' || window.location.protocol === 'https:';
-    let serverAvailable = false;
-    let unlockedPassword = '';
+    // Opcional: cole aqui a URL do Firebase Realtime Database para já abrir conectado em todos os aparelhos no GitHub Pages
+    // Ex.: const DEFAULT_CLOUD_SYNC_URL = 'https://pascom-saopedro-default-rtdb.firebaseio.com';
+    const DEFAULT_CLOUD_SYNC_URL = '';
+    const CLOUD_URL_KEY = 'pascom_cloud_sync_url_v1';
 
-    async function apiRequest(action, options = {}) {
-      const url = `${API_URL}?action=${encodeURIComponent(action)}`;
-      const resp = await fetch(url, { cache: 'no-store', ...options });
-      const data = await resp.json().catch(() => ({ ok: false, error: 'Resposta inválida do servidor.' }));
-      if (!resp.ok && data.ok !== false) {
-        data.ok = false;
-      }
-      return data;
+    function normalizeCloudUrl(url) {
+      if (!url) return '';
+      let clean = String(url).trim().replace(/\/+$/, '');
+      if (clean && !/^https?:\/\//i.test(clean)) clean = 'https://' + clean;
+      return clean;
     }
 
-    function saveState(scope = 'all') {
+    function getCloudUrl() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const fromParam = params.get('sync');
+        if (fromParam) {
+          const norm = normalizeCloudUrl(fromParam);
+          if (norm) localStorage.setItem(CLOUD_URL_KEY, norm);
+          return norm;
+        }
+        const saved = localStorage.getItem(CLOUD_URL_KEY);
+        if (saved) return normalizeCloudUrl(saved);
+      } catch (e) {}
+      return normalizeCloudUrl(DEFAULT_CLOUD_SYNC_URL);
+    }
+
+    function updateCloudBadgeUI() {
+      const url = getCloudUrl();
+      const dot = document.getElementById('cloud-status-dot');
+      const lbl = document.getElementById('cloud-status-label');
+      const modalBadge = document.getElementById('cloud-modal-badge');
+      if (dot) {
+        dot.className = url
+          ? 'w-2 h-2 rounded-full bg-emerald-500 shrink-0'
+          : 'w-2 h-2 rounded-full bg-stone-400 shrink-0';
+      }
+      if (lbl) lbl.textContent = url ? 'Nuvem Ativa' : 'Nuvem / Backup';
+      if (modalBadge) {
+        modalBadge.textContent = url ? 'Conectado' : 'Modo Local';
+        modalBadge.className = url
+          ? 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800'
+          : 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-stone-600';
+      }
+    }
+
+    let cloudSaveTimer = null;
+    async function pushStateToCloud() {
+      const base = getCloudUrl();
+      if (!base) return;
+      try {
+        await fetch(`${base}/pascom_state.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(state)
+        });
+      } catch (e) {}
+    }
+
+    async function pullStateFromCloud(silent = true) {
+      const base = getCloudUrl();
+      if (!base) return false;
+      try {
+        const resp = await fetch(`${base}/pascom_state.json`, { cache: 'no-store' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        if (data && typeof data === 'object') {
+          state.team = normalizeTeam(data.team);
+          state.schedules = (data.schedules && typeof data.schedules === 'object' && !Array.isArray(data.schedules)) ? data.schedules : {};
+          state.customMasses = Array.isArray(data.customMasses) ? data.customMasses : [];
+          state.arts = Array.isArray(data.arts) ? data.arts : [];
+          state.priests = Array.isArray(data.priests) ? data.priests : [];
+          if (data.schedulePassword) state.schedulePassword = data.schedulePassword;
+          if (data.obsConfig && typeof data.obsConfig === 'object') {
+            state.obsConfig = data.obsConfig;
+            obsDeck.config.leituras = { ...defaultObsConfigs.leituras, ...(data.obsConfig.leituras || {}) };
+            obsDeck.config.padres = { ...defaultObsConfigs.padres, ...(data.obsConfig.padres || {}) };
+          }
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+          if (!silent) showToast('Dados sincronizados da nuvem!');
+          return true;
+        }
+      } catch (e) {
+        if (!silent) showToast('Não foi possível conectar à URL informada.', true);
+      }
+      return false;
+    }
+
+    function compressImageDataUrl(file, maxSide = 1280, quality = 0.82) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = ev => {
+          const rawUrl = ev.target.result;
+          // Se já for pequeno (< 300 KB), preserva original sem recomprimir
+          if (file.size <= 300 * 1024) {
+            resolve(rawUrl);
+            return;
+          }
+          const img = new Image();
+          img.onerror = () => resolve(rawUrl);
+          img.onload = () => {
+            let w = img.width;
+            let h = img.height;
+            if (w > maxSide || h > maxSide) {
+              const ratio = Math.min(maxSide / w, maxSide / h);
+              w = Math.round(w * ratio);
+              h = Math.round(h * ratio);
+            }
+            const c = document.createElement('canvas');
+            c.width = w;
+            c.height = h;
+            const cctx = c.getContext('2d');
+            cctx.drawImage(img, 0, 0, w, h);
+            const mime = file.type === 'image/png' && file.size < 900 * 1024 ? 'image/png' : 'image/jpeg';
+            resolve(c.toDataURL(mime, quality));
+          };
+          img.src = rawUrl;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function saveState() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch (e) {
-        if (!serverAvailable) {
-          showToast('Aviso: armazenamento local cheio; anexos grandes ficam salvos nesta sessão.', true);
-        }
+        showToast('Aviso: armazenamento local cheio; conecte a Nuvem Grátis ou remova anexos antigos.', true);
       }
-
-      if (!serverAvailable) return;
-
-      if ((scope === 'schedule' || scope === 'all') && isScheduleUnlocked && unlockedPassword) {
-        apiRequest('save_schedule', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            password: unlockedPassword,
-            team: state.team,
-            schedules: state.schedules,
-            customMasses: state.customMasses
-          })
-        }).then(res => {
-          if (!res.ok) showToast(res.error || 'Erro ao salvar escala no servidor.', true);
-        }).catch(() => {
-          showToast('Sem conexão com o servidor ao salvar a escala.', true);
-        });
+      if (getCloudUrl()) {
+        clearTimeout(cloudSaveTimer);
+        cloudSaveTimer = setTimeout(pushStateToCloud, 350);
       }
-
-      if (scope === 'arts' || scope === 'all') {
-        apiRequest('save_arts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ arts: state.arts })
-        }).then(res => {
-          if (!res.ok) showToast(res.error || 'Erro ao salvar artes no servidor.', true);
-        }).catch(() => {});
-      }
-
-      if (scope === 'obs' || scope === 'all') {
-        apiRequest('save_obs_meta', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            priests: state.priests,
-            obsConfig: state.obsConfig
-          })
-        }).catch(() => {});
-      }
-    }
-
-    async function syncFromServer() {
-      if (!IS_HTTP) return false;
-      try {
-        const res = await apiRequest('get_state');
-        if (res && res.ok && res.state) {
-          serverAvailable = true;
-          const s = res.state;
-          state.team = normalizeTeam(s.team);
-          state.schedules = (s.schedules && typeof s.schedules === 'object' && !Array.isArray(s.schedules)) ? s.schedules : {};
-          state.customMasses = Array.isArray(s.customMasses) ? s.customMasses : [];
-          state.arts = Array.isArray(s.arts) ? s.arts : [];
-          state.priests = Array.isArray(s.priests) ? s.priests : [];
-          if (s.obsConfig && typeof s.obsConfig === 'object') {
-            state.obsConfig = s.obsConfig;
-            obsDeck.config.leituras = { ...defaultObsConfigs.leituras, ...(s.obsConfig.leituras || {}) };
-            obsDeck.config.padres = { ...defaultObsConfigs.padres, ...(s.obsConfig.padres || {}) };
-          }
-          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
-          return true;
-        }
-      } catch (e) {}
-      return false;
     }
 
     let state = loadState();
@@ -1839,7 +1970,7 @@
           if (state.schedules[dateKey] && state.schedules[dateKey][customId]) {
             delete state.schedules[dateKey][customId];
           }
-          saveState('schedule');
+          saveState();
           renderCalendar();
           showToast('Missa extra removida.');
         });
@@ -1850,7 +1981,7 @@
           const key = sel.dataset.sundayColor;
           if (!state.schedules[key]) state.schedules[key] = {};
           state.schedules[key].colorOverride = sel.value;
-          saveState('schedule');
+          saveState();
           renderCalendar();
           showToast('Cor litúrgica atualizada!');
         });
@@ -1955,7 +2086,6 @@
     document.getElementById('btn-toggle-edit-schedule').addEventListener('click', () => {
       if (isScheduleUnlocked) {
         isScheduleUnlocked = false;
-        unlockedPassword = '';
         updateScheduleLockUI();
         renderCalendar();
         showToast('Edição da escala bloqueada (modo visualização).');
@@ -1972,7 +2102,7 @@
     document.getElementById('btn-close-pass-modal').addEventListener('click', closePasswordModal);
     document.getElementById('btn-cancel-pass-modal').addEventListener('click', closePasswordModal);
 
-    document.getElementById('form-schedule-password').addEventListener('submit', async e => {
+    document.getElementById('form-schedule-password').addEventListener('submit', e => {
       e.preventDefault();
       const val = document.getElementById('input-schedule-password').value.trim();
       const err = document.getElementById('pass-error-msg');
@@ -1983,62 +2113,15 @@
           err.classList.remove('hidden');
           return;
         }
-        if (serverAvailable) {
-          try {
-            const res = await apiRequest('change_password', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ currentPassword: unlockedPassword, newPassword: val })
-            });
-            if (!res.ok) {
-              err.textContent = res.error || 'Não foi possível alterar a senha.';
-              err.classList.remove('hidden');
-              return;
-            }
-            unlockedPassword = val;
-          } catch (ex) {
-            err.textContent = 'Erro de conexão com o servidor.';
-            err.classList.remove('hidden');
-            return;
-          }
-        } else {
-          state.schedulePassword = val;
-          saveState('none');
-        }
+        state.schedulePassword = val;
+        saveState();
         closePasswordModal();
         showToast('Senha da escala atualizada com sucesso!');
         return;
       }
 
-      if (serverAvailable) {
-        try {
-          const res = await apiRequest('verify_password', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password: val })
-          });
-          if (res.ok) {
-            isScheduleUnlocked = true;
-            unlockedPassword = val;
-            closePasswordModal();
-            updateScheduleLockUI();
-            renderCalendar();
-            showToast('Modo de edição da escala liberado!');
-          } else {
-            err.textContent = 'Senha incorreta. Tente novamente.';
-            err.classList.remove('hidden');
-          }
-          return;
-        } catch (ex) {
-          err.textContent = 'Erro de conexão com o servidor.';
-          err.classList.remove('hidden');
-          return;
-        }
-      }
-
       if (val === getSchedulePassword()) {
         isScheduleUnlocked = true;
-        unlockedPassword = val;
         closePasswordModal();
         updateScheduleLockUI();
         renderCalendar();
@@ -2071,7 +2154,7 @@
         d.setDate(d.getDate() + 1);
       }
       if (added > 0) {
-        saveState('schedule');
+        saveState();
         renderCalendar();
         showToast(`${added} quinta(s)-feira(s) adicionada(s) ao mês (19h)!`);
       } else {
@@ -2134,7 +2217,7 @@
       currentYear = y;
       currentMonth = m - 1;
 
-      saveState('schedule');
+      saveState();
       document.getElementById('modal-add-mass').classList.add('hidden');
       renderCalendar();
       showToast(`${times.length > 1 ? times.length + ' missas adicionadas' : 'Missa adicionada'} em ${formatDateBR(dateKey)}!`);
@@ -2247,7 +2330,7 @@
         }
       });
 
-      saveState('schedule');
+      saveState();
       document.getElementById('modal-randomize').classList.add('hidden');
       renderCalendar();
       if (filledSlots > 0) {
@@ -2339,7 +2422,7 @@
         }
       });
 
-      saveState('schedule');
+      saveState();
       closeMassModal();
       renderCalendar();
       showToast('Escala salva com sucesso!');
@@ -2411,7 +2494,7 @@
         btn.addEventListener('click', () => {
           state.team = state.team.filter(a => a.id !== btn.dataset.removeMember);
           if (editingMemberId === btn.dataset.removeMember) resetMemberForm();
-          saveState('schedule');
+          saveState();
           renderTeamList();
           renderCalendar();
           showToast('Agente removido.');
@@ -2468,7 +2551,7 @@
         showToast(`${name} adicionado(a) à equipe!`);
       }
 
-      saveState('schedule');
+      saveState();
       resetMemberForm();
       renderTeamList();
       renderCalendar();
@@ -2667,7 +2750,7 @@
           const item = state.arts.find(a => a.id === sel.dataset.changeArtStatus);
           if (item) {
             item.status = sel.value;
-            saveState('arts');
+            saveState();
             renderArts();
             showToast('Status da arte atualizado!');
           }
@@ -2680,47 +2763,17 @@
           if (!file) return;
           const item = state.arts.find(a => a.id === inp.dataset.uploadFinalArt);
           if (!item) return;
-
-          if (serverAvailable) {
-            showToast('Enviando arte final para o servidor...');
-            const formData = new FormData();
-            formData.append('file', file);
-            try {
-              const res = await apiRequest('upload_art', { method: 'POST', body: formData });
-              if (!res.ok) {
-                showToast(res.error || 'Erro ao enviar imagem.', true);
-                return;
-              }
-              if (item.finalArtDataUrl && item.finalArtDataUrl.startsWith('uploads/artes/')) {
-                apiRequest('delete_art_file', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ url: item.finalArtDataUrl })
-                }).catch(() => {});
-              }
-              item.finalArtDataUrl = res.url;
-              item.finalArtName = res.filename || file.name;
-              item.status = 'pronta';
-              saveState('arts');
-              renderArts();
-              showToast('Arte final salva no servidor e marcada como Pronta p/ Postar!');
-              return;
-            } catch (ex) {
-              showToast('Falha de conexão ao enviar imagem.', true);
-              return;
-            }
-          }
-
-          const reader = new FileReader();
-          reader.onload = ev => {
-            item.finalArtDataUrl = ev.target.result;
+          try {
+            const optimizedUrl = await compressImageDataUrl(file);
+            item.finalArtDataUrl = optimizedUrl;
             item.finalArtName = file.name;
             item.status = 'pronta';
-            saveState('arts');
+            saveState();
             renderArts();
-            showToast('Arte final anexada e marcada como Pronta p/ Postar!');
-          };
-          reader.readAsDataURL(file);
+            showToast('Arte final otimizada, anexada e marcada como Pronta p/ Postar!');
+          } catch (err) {
+            showToast('Não foi possível ler a imagem selecionada.', true);
+          }
         });
       });
 
@@ -2728,17 +2781,10 @@
         btn.addEventListener('click', () => {
           const item = state.arts.find(a => a.id === btn.dataset.removeFinalArt);
           if (item) {
-            if (serverAvailable && item.finalArtDataUrl && item.finalArtDataUrl.startsWith('uploads/artes/')) {
-              apiRequest('delete_art_file', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: item.finalArtDataUrl })
-              }).catch(() => {});
-            }
             item.finalArtDataUrl = null;
             item.finalArtName = null;
             item.status = 'producao';
-            saveState('arts');
+            saveState();
             renderArts();
             showToast('Anexo removido.');
           }
@@ -2796,7 +2842,7 @@
         finalArtName: null,
         createdAt: Date.now()
       });
-      saveState('arts');
+      saveState();
       renderArts();
       showToast('Pedido de exemplo carregado!');
     }
@@ -2812,17 +2858,9 @@
     });
     document.getElementById('btn-confirm-ok').addEventListener('click', () => {
       if (pendingDeleteArtId) {
-        const target = state.arts.find(a => a.id === pendingDeleteArtId);
-        if (serverAvailable && target && target.finalArtDataUrl && target.finalArtDataUrl.startsWith('uploads/artes/')) {
-          apiRequest('delete_art_file', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: target.finalArtDataUrl })
-          }).catch(() => {});
-        }
         state.arts = state.arts.filter(a => a.id !== pendingDeleteArtId);
         pendingDeleteArtId = null;
-        saveState('arts');
+        saveState();
         renderArts();
         showToast('Pendência removida.');
       }
@@ -2844,7 +2882,7 @@
         finalArtName: null,
         createdAt: Date.now()
       });
-      saveState('arts');
+      saveState();
       document.getElementById('modal-new-art').classList.add('hidden');
       renderArts();
       showToast('Solicitação de arte cadastrada!');
@@ -3058,30 +3096,30 @@
         applyLiturgyDataToUI(overlayState.liturgyCache[dateKey], dateKey, 'Carregado');
         return;
       }
+      if (!forceReload) {
+        try {
+          const lsLit = localStorage.getItem('pascom_liturgy_' + dateKey);
+          if (lsLit) {
+            const parsedLs = JSON.parse(lsLit);
+            if (parsedLs && parsedLs.evangelho) {
+              overlayState.liturgyCache[dateKey] = parsedLs;
+              applyLiturgyDataToUI(parsedLs, dateKey, 'Liturgia em cache');
+              return;
+            }
+          }
+        } catch (e) {}
+      }
 
       if (statusEl) statusEl.textContent = 'Buscando...';
       const [y, m, d] = dateKey.split('-');
 
       try {
-        let data = null;
-        if (IS_HTTP) {
-          try {
-            const proxyResp = await fetch(`${API_URL}?action=liturgy&dia=${Number(d)}&mes=${Number(m)}&ano=${y}${forceReload ? '&force=1' : ''}`, { cache: 'no-store' });
-            if (proxyResp.ok) {
-              const proxyJson = await proxyResp.json();
-              if (proxyJson && proxyJson.ok && proxyJson.data) {
-                data = proxyJson.data;
-              }
-            }
-          } catch (proxyErr) {}
-        }
-        if (!data) {
-          const resp = await fetch(`https://liturgia.up.railway.app/v2/?dia=${Number(d)}&mes=${Number(m)}&ano=${y}`);
-          if (!resp.ok) throw new Error('HTTP ' + resp.status);
-          data = await resp.json();
-        }
+        const resp = await fetch(`https://liturgia.up.railway.app/v2/?dia=${Number(d)}&mes=${Number(m)}&ano=${y}`);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
         const parsed = parseLiturgyApiPayload(data, dateKey);
         overlayState.liturgyCache[dateKey] = parsed;
+        try { localStorage.setItem('pascom_liturgy_' + dateKey, JSON.stringify(parsed)); } catch (e) {}
         applyLiturgyDataToUI(parsed, dateKey, 'Liturgia online');
       } catch (err) {
         // Fallback to verified local readings or structured day defaults
@@ -3630,7 +3668,7 @@
         leituras: { ...obsDeck.config.leituras },
         padres: { ...obsDeck.config.padres }
       };
-      saveState('obs');
+      saveState();
     }
 
     function syncConfigControlsToUI() {
@@ -3797,19 +3835,22 @@
       applyBroadcastVisual('obs-live', payload, animateSwap);
       updateTallyUI();
 
-      // Sync to OBS Browser Source tabs / docks via BroadcastChannel + localStorage + HostGator PHP Server
+      // Sync to OBS Browser Source tabs / docks via BroadcastChannel + localStorage + Firebase Cloud (se configurado)
       try { localStorage.setItem(OBS_STATE_KEY, JSON.stringify(payload)); } catch (e) {}
       if (obsChannel) {
         try { obsChannel.postMessage(payload); } catch (e) {}
       }
-      if (IS_HTTP) {
-        fetch(`${API_URL}?action=obs_set`, {
-          method: 'POST',
+      const cloudBase = getCloudUrl();
+      if (cloudBase) {
+        fetch(`${cloudBase}/pascom_obs_live.json`, {
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
           keepalive: true
         }).catch(() => {});
       }
+      // Push live state directly to local OBS Studio Plugin (pascom_obs_github.py)
+      pushToLocalObsPlugin('/api/state', payload);
 
       // Handle optional auto-hide timer (per active profile)
       const activeAutoHide = (obsDeck.config[obsDeck.activeSource] || obsDeck.config.leituras).autoHideSec || 0;
@@ -4021,7 +4062,7 @@
           const p = (state.priests || []).find(x => x.id === pid);
           if (p) {
             p[field] = inp.value;
-            saveState('obs');
+            saveState();
             if (obsDeck.activeSource === 'padres' && obsDeck.selectedPriestId === pid) {
               broadcastObsState(false);
             }
@@ -4058,7 +4099,7 @@
               broadcastObsState(false);
             }
           }
-          saveState('obs');
+          saveState();
           renderPriestsCards();
           showToast('Cartão de padre removido.');
         });
@@ -4100,7 +4141,7 @@
         name,
         role
       });
-      saveState('obs');
+      saveState();
       nameInp.value = '';
       roleInp.value = '';
       renderPriestsCards();
@@ -4216,23 +4257,27 @@
 
     document.getElementById('btn-obs-copy-url').addEventListener('click', () => {
       const base = window.location.href.split('#')[0].split('?')[0];
-      const obsUrl = `${base}#obs`;
+      const cloudBase = getCloudUrl();
+      const obsUrl = cloudBase ? `${base}?sync=${encodeURIComponent(cloudBase)}#obs` : `${base}#obs`;
       copyTextToClipboard(obsUrl);
     });
 
-    // Clean Fullscreen Output Mode (for direct capture or OBS Browser Source with remote polling)
-    let obsPollInterval = null;
+    // Clean Fullscreen Output Mode (for direct capture or OBS Browser Source)
+    let obsCloudPoll = null;
     let lastObsTs = 0;
 
-    async function pollObsFromServer(animate = true) {
-      if (!IS_HTTP) return;
+    async function pollObsFromCloud(animate = true) {
+      const cloudBase = getCloudUrl();
+      if (!cloudBase) return;
       try {
-        const res = await apiRequest('obs_get');
-        if (res && res.ok && res.payload) {
-          const ts = Number(res.payload.ts) || 0;
+        const resp = await fetch(`${cloudBase}/pascom_obs_live.json`, { cache: 'no-store' });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        if (data && typeof data === 'object') {
+          const ts = Number(data.ts) || 0;
           if (ts !== lastObsTs) {
             lastObsTs = ts;
-            applyBroadcastVisual('obs-live', res.payload, animate);
+            applyBroadcastVisual('obs-live', data, animate);
           }
         }
       } catch (e) {}
@@ -4253,17 +4298,17 @@
         }
       } catch (e) {}
 
-      // Start remote polling from HostGator PHP server for live phone/laptop control
-      clearInterval(obsPollInterval);
-      if (IS_HTTP) {
-        pollObsFromServer(false);
-        obsPollInterval = setInterval(() => pollObsFromServer(true), 750);
+      // If Firebase Cloud URL is configured, poll live updates for remote phone control
+      clearInterval(obsCloudPoll);
+      if (getCloudUrl()) {
+        pollObsFromCloud(false);
+        obsCloudPoll = setInterval(() => pollObsFromCloud(true), 750);
       }
     }
 
     function exitCleanObsMode() {
-      clearInterval(obsPollInterval);
-      obsPollInterval = null;
+      clearInterval(obsCloudPoll);
+      obsCloudPoll = null;
       document.body.classList.remove('obs-mode');
       document.getElementById('obs-output-stage').classList.add('hidden');
       document.getElementById('btn-exit-clean-obs').classList.add('hidden');
@@ -4294,6 +4339,220 @@
       }
     });
 
+    // ==================== CLOUD SYNC & BACKUP HANDLERS ====================
+    document.getElementById('btn-open-cloud-sync').addEventListener('click', () => {
+      document.getElementById('input-cloud-url').value = getCloudUrl();
+      updateCloudBadgeUI();
+      document.getElementById('modal-cloud-sync').classList.remove('hidden');
+      lucide.createIcons();
+    });
+    document.getElementById('btn-close-cloud-modal').addEventListener('click', () => {
+      document.getElementById('modal-cloud-sync').classList.add('hidden');
+    });
+
+    document.getElementById('form-cloud-sync').addEventListener('submit', async e => {
+      e.preventDefault();
+      const url = normalizeCloudUrl(document.getElementById('input-cloud-url').value);
+      if (!url) return;
+      localStorage.setItem(CLOUD_URL_KEY, url);
+      updateCloudBadgeUI();
+      const pulled = await pullStateFromCloud(false);
+      if (pulled) {
+        renderCalendar();
+        renderArts();
+        renderPriestsCards();
+        syncConfigControlsToUI();
+      } else {
+        await pushStateToCloud();
+        showToast('Nuvem conectada e dados locais enviados!');
+      }
+      lucide.createIcons();
+    });
+
+    document.getElementById('btn-cloud-pull-now').addEventListener('click', async () => {
+      if (!getCloudUrl()) {
+        showToast('Informe a URL do Firebase primeiro.', true);
+        return;
+      }
+      const ok = await pullStateFromCloud(false);
+      if (ok) {
+        renderCalendar();
+        renderArts();
+        renderPriestsCards();
+        syncConfigControlsToUI();
+        lucide.createIcons();
+      }
+    });
+
+    document.getElementById('btn-cloud-disconnect').addEventListener('click', () => {
+      localStorage.removeItem(CLOUD_URL_KEY);
+      document.getElementById('input-cloud-url').value = '';
+      updateCloudBadgeUI();
+      showToast('Desconectado da nuvem (usando armazenamento local).');
+    });
+
+    document.getElementById('btn-export-backup').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pascom-saopedro-backup-${toDateKey(today)}.json`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('Backup JSON baixado!');
+    });
+
+    document.getElementById('input-import-backup').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const parsed = JSON.parse(ev.target.result);
+          if (!parsed || typeof parsed !== 'object') throw new Error('inválido');
+          state.team = normalizeTeam(parsed.team);
+          state.schedules = (parsed.schedules && typeof parsed.schedules === 'object') ? parsed.schedules : {};
+          state.customMasses = Array.isArray(parsed.customMasses) ? parsed.customMasses : [];
+          state.arts = Array.isArray(parsed.arts) ? parsed.arts : [];
+          state.priests = Array.isArray(parsed.priests) ? parsed.priests : [];
+          if (parsed.obsConfig) {
+            state.obsConfig = parsed.obsConfig;
+            obsDeck.config.leituras = { ...defaultObsConfigs.leituras, ...(parsed.obsConfig.leituras || {}) };
+            obsDeck.config.padres = { ...defaultObsConfigs.padres, ...(parsed.obsConfig.padres || {}) };
+          }
+          if (parsed.schedulePassword) state.schedulePassword = parsed.schedulePassword;
+          saveState();
+          renderCalendar();
+          renderArts();
+          renderPriestsCards();
+          syncConfigControlsToUI();
+          lucide.createIcons();
+          document.getElementById('modal-cloud-sync').classList.add('hidden');
+          showToast('Backup importado com sucesso!');
+        } catch (err) {
+          showToast('Arquivo de backup inválido.', true);
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    // ==================== LOCAL OBS STUDIO PLUGIN BRIDGE (GITHUB PAGES) ====================
+    const OBS_PLUGIN_BASE = 'http://127.0.0.1:47890';
+    let obsPluginConnected = false;
+
+    function updateObsPluginBadge(connected, label) {
+      obsPluginConnected = connected;
+      const badge = document.getElementById('obs-plugin-status-badge');
+      const dot = document.getElementById('obs-plugin-status-dot');
+      const text = document.getElementById('obs-plugin-status-text');
+      if (!badge || !dot || !text) return;
+      if (connected) {
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800';
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        text.textContent = label || 'Plugin OBS Conectado';
+      } else {
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-stone-200 text-stone-600';
+        dot.className = 'w-2 h-2 rounded-full bg-stone-400';
+        text.textContent = label || 'Plugin OBS Offline';
+      }
+    }
+
+    function buildObsConfigExportPayload() {
+      return {
+        version: 1,
+        updatedAt: new Date().toISOString(),
+        obsConfig: {
+          leituras: { ...obsDeck.config.leituras },
+          padres: { ...obsDeck.config.padres }
+        },
+        priests: state.priests || [],
+        cards: obsDeck.cards || [],
+        live: getActiveObsPayload()
+      };
+    }
+
+    async function pushToLocalObsPlugin(endpoint, bodyObj) {
+      try {
+        const resp = await fetch(`${OBS_PLUGIN_BASE}${endpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyObj)
+        });
+        if (resp.ok) {
+          if (!obsPluginConnected) updateObsPluginBadge(true, 'Plugin OBS Conectado');
+          return true;
+        }
+      } catch (e) {}
+      return false;
+    }
+
+    async function checkLocalObsPlugin(silent = true) {
+      try {
+        const resp = await fetch(`${OBS_PLUGIN_BASE}/api/status`, { cache: 'no-store' });
+        if (resp.ok) {
+          updateObsPluginBadge(true, 'Plugin OBS Conectado');
+          pushToLocalObsPlugin('/api/config', buildObsConfigExportPayload());
+          if (!silent) showToast('Conectado ao plugin local do OBS Studio!');
+          return true;
+        }
+      } catch (e) {}
+      updateObsPluginBadge(false, 'Plugin OBS Offline');
+      if (!silent) showToast('Plugin local do OBS não detectado em 127.0.0.1:47890.', true);
+      return false;
+    }
+
+    async function loadObsConfigFromGitHubPages(forceApply = false) {
+      try {
+        const resp = await fetch(`./obs-config.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (!resp.ok) return false;
+        const cfg = await resp.json();
+        if (!cfg || typeof cfg !== 'object') return false;
+        const hasLocalObs = Boolean(state.obsConfig && (state.obsConfig.leituras || state.obsConfig.padres));
+        if (forceApply || !hasLocalObs) {
+          if (cfg.obsConfig) {
+            state.obsConfig = cfg.obsConfig;
+            obsDeck.config.leituras = { ...defaultObsConfigs.leituras, ...(cfg.obsConfig.leituras || {}) };
+            obsDeck.config.padres = { ...defaultObsConfigs.padres, ...(cfg.obsConfig.padres || {}) };
+          }
+          if (Array.isArray(cfg.priests) && cfg.priests.length && (forceApply || !(state.priests && state.priests.length))) {
+            state.priests = cfg.priests;
+          }
+          saveState();
+          renderPriestsCards();
+          syncConfigControlsToUI();
+          if (forceApply) showToast('Configurações recarregadas de obs-config.json!');
+        }
+        return true;
+      } catch (e) {
+        if (forceApply) showToast('Não foi possível ler ./obs-config.json.', true);
+        return false;
+      }
+    }
+
+    const btnExportObsJson = document.getElementById('btn-obs-export-github-json');
+    if (btnExportObsJson) {
+      btnExportObsJson.addEventListener('click', () => {
+        const payload = buildObsConfigExportPayload();
+        const blob = new Blob([JSON.stringify(payload, null, 2) + '\n'], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'obs-config.json';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast('obs-config.json baixado! Envie para a raiz do seu repositório no GitHub.');
+      });
+    }
+    const btnReconnectObs = document.getElementById('btn-obs-plugin-reconnect');
+    if (btnReconnectObs) {
+      btnReconnectObs.addEventListener('click', () => checkLocalObsPlugin(false));
+    }
+    const btnPullRepoJson = document.getElementById('btn-obs-pull-repo-json');
+    if (btnPullRepoJson) {
+      btnPullRepoJson.addEventListener('click', () => loadObsConfigFromGitHubPages(true));
+    }
+
     // ==================== INITIALIZATION ====================
     async function init() {
       const isObsMode = window.location.hash === '#obs' || new URLSearchParams(window.location.search).get('obs') === '1';
@@ -4313,21 +4572,25 @@
       document.getElementById('comunhao-date-picker').value = todayKey;
       applyDateLiturgicalColor(todayKey);
 
+      updateCloudBadgeUI();
       updateScheduleLockUI();
       renderCalendar();
       renderArts();
       syncConfigControlsToUI();
       lucide.createIcons();
+      loadObsConfigFromGitHubPages(false);
+      checkLocalObsPlugin(true);
+      setInterval(() => checkLocalObsPlugin(true), 12000);
 
-      // Sincroniza dados compartilhados com o servidor HostGator (api.php)
-      const synced = await syncFromServer();
-      if (synced) {
-        renderCalendar();
-        renderArts();
-        renderPriestsCards();
-        syncConfigControlsToUI();
-        applyDateLiturgicalColor(overlayDatePicker.value || todayKey);
-        lucide.createIcons();
+      if (getCloudUrl()) {
+        const pulled = await pullStateFromCloud(true);
+        if (pulled) {
+          renderCalendar();
+          renderArts();
+          renderPriestsCards();
+          syncConfigControlsToUI();
+          lucide.createIcons();
+        }
       }
     }
 

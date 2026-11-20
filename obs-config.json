@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-20T00:00:00Z",
+  "obsConfig": {
+    "leituras": {
+      "color": "verde",
+      "anim": "slide",
+      "pos": "bottom-left",
+      "scalePercent": 100,
+      "autoHideSec": 0
+    },
+    "padres": {
+      "color": "verde",
+      "anim": "fadeup",
+      "pos": "bottom-center",
+      "scalePercent": 100,
+      "autoHideSec": 0
+    }
+  },
+  "priests": [
+    {
+      "id": "p1",
+      "name": "Pe. Celebrante",
+      "role": "Celebrante"
+    }
+  ],
+  "cards": [
+    {
+      "label": "Santa Missa",
+      "ref": "Paróquia São Pedro",
+      "sub": "Itapetim - PE"
+    }
+  ],
+  "live": {
+    "onAir": false,
+    "isPriest": false,
+    "tag": "SANTA MISSA",
+    "title": "Paróquia São Pedro",
+    "sub": "Itapetim - PE",
+    "color": "verde",
+    "anim": "slide",
+    "pos": "bottom-left",
+    "scalePercent": 100,
+    "ts": 0
+  }
+}
