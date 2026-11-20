@@ -1,0 +1,61 @@
+====================================================================
+PASCOM — PARÓQUIA SÃO PEDRO | ITAPETIM - PE
+GUIA DE INSTALAÇÃO NA HOSTGATOR (cPanel)
+====================================================================
+
+Não é necessário criar banco de dados MySQL! Todo o armazenamento
+funciona automaticamente em PHP com arquivos protegidos em /data
+e imagens enviadas salvas em /uploads/artes.
+
+1. COMO PUBLICAR NA HOSTGATOR
+--------------------------------------------------------------------
+1) Acesse o cPanel da sua conta HostGator.
+2) Abra o "Gerenciador de Arquivos" (File Manager).
+3) Entre na pasta "public_html" (ou na subpasta do subdomínio,
+   por exemplo: public_html/pascom).
+4) Clique em "Carregar" (Upload) e envie o arquivo:
+   pascom-sao-pedro-hostgator.zip
+5) Volte ao Gerenciador de Arquivos, clique com o botão direito no
+   arquivo .zip e escolha "Extrair" (Extract).
+6) Confirme que os arquivos ficaram diretamente dentro da pasta:
+   - index.html
+   - api.php
+   - .htaccess
+   - assets/overlays/ (com os 5 arquivos .png)
+   - data/
+   - uploads/artes/
+7) (Opcional) Apague o arquivo .zip após extrair.
+8) Acesse o seu domínio no navegador — pronto!
+
+2. PERMISSÕES E PHP (SE PRECISAR CONFERIR)
+--------------------------------------------------------------------
+- Versão recomendada do PHP no cPanel (MultiPHP Manager): PHP 8.1 ou 8.2
+  (compatível também com PHP 7.4 e 8.0).
+- Permissões das pastas "data" e "uploads/artes": 755 (padrão HostGator).
+- Para testar se o servidor está gravando corretamente, abra:
+  https://seudominio.com.br/api.php?action=ping
+  O retorno esperado é:
+  {"ok":true,"serverTime":...,"dataWritable":true,"uploadsWritable":true}
+
+3. SENHA DA ESCALA DOMINICAL
+--------------------------------------------------------------------
+- Senha padrão inicial: pascom2026
+- Para trocar, clique em "Editar", digite a senha atual e clique no
+  ícone da chave (Alterar senha). A senha é salva com criptografia
+  no servidor (data/state.json, bloqueado para acesso externo).
+
+4. CONTROLE AO VIVO DO OBS STUDIO (INCLUSIVE PELO CELULAR)
+--------------------------------------------------------------------
+- No OBS Studio do computador da transmissão, adicione uma fonte
+  "Navegador" (Browser Source) em 1920x1080 apontando para:
+  https://seudominio.com.br/#obs
+- Qualquer operador da PASCOM pode abrir https://seudominio.com.br/
+  no celular ou notebook, ir na aba "Transmissão" e clicar em
+  "COLOCAR NO AR / OCULTAR" — o GC aparece ao vivo no OBS em menos
+  de 1 segundo!
+
+5. ATIVAR REDIRECIONAMENTO HTTPS (OPCIONAL)
+--------------------------------------------------------------------
+- Se o SSL gratuito da HostGator (AutoSSL) já estiver ativo no seu
+  domínio, edite o arquivo ".htaccess" na raiz e remova o "#" das
+  3 linhas do bloco RewriteEngine On.
