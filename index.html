@@ -38,64 +38,6 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #D6D3D1; border-radius: 999px; }
     ::-webkit-scrollbar-thumb:hover { background: #A8A29E; }
-
-    /* Native OBS Broadcast Lower-Third Animations */
-    body.obs-mode {
-      background: transparent !important;
-      overflow: hidden !important;
-    }
-    body.obs-mode > header,
-    body.obs-mode > main,
-    body.obs-mode > #toast {
-      display: none !important;
-    }
-    .broadcast-card {
-      transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
-                  opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-                  clip-path 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-      will-change: transform, opacity, clip-path;
-    }
-    .broadcast-card .lt-bar {
-      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-      transform-origin: bottom;
-    }
-    .broadcast-card .lt-content {
-      transition: opacity 0.4s ease 0.12s, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.08s;
-    }
-    /* Hidden states by animation style */
-    .broadcast-card.anim-slide.is-hidden {
-      opacity: 0;
-      transform: translateX(-72px);
-      pointer-events: none;
-    }
-    .broadcast-card.anim-slide.from-right.is-hidden {
-      transform: translateX(72px);
-    }
-    .broadcast-card.anim-slide.is-hidden .lt-bar { transform: scaleY(0); }
-    .broadcast-card.anim-slide.is-hidden .lt-content { opacity: 0; transform: translateX(-20px); }
-
-    .broadcast-card.anim-fadeup.is-hidden {
-      opacity: 0;
-      transform: translateY(42px) scale(0.97);
-      pointer-events: none;
-    }
-    .broadcast-card.anim-fadeup.is-hidden .lt-content { opacity: 0; transform: translateY(12px); }
-
-    .broadcast-card.anim-wipe.is-hidden {
-      opacity: 0;
-      clip-path: inset(0 100% 0 0);
-      pointer-events: none;
-    }
-    .broadcast-card.anim-wipe:not(.is-hidden) {
-      clip-path: inset(0 0 0 0);
-    }
-
-    /* Swapping text micro-transition */
-    .broadcast-card.is-swapping .lt-content {
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.16s ease, transform 0.16s ease;
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -136,10 +78,6 @@
           <i data-lucide="layers" class="w-4 h-4"></i>
           <span>Sobreposição</span>
         </button>
-        <button id="nav-comunhao" data-tab="comunhao" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all text-stone-600 hover:text-stone-900">
-          <i data-lucide="radio" class="w-4 h-4"></i>
-          <span>Transmissão</span>
-        </button>
       </nav>
 
       <!-- Today Liturgical Pill & Cloud/Backup Button -->
@@ -171,10 +109,6 @@
       <button data-tab="sobreposicao" class="tab-btn-mobile flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold text-stone-600 bg-stone-100">
         <i data-lucide="layers" class="w-3.5 h-3.5"></i>
         <span>Sobreposição</span>
-      </button>
-      <button data-tab="comunhao" class="tab-btn-mobile flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold text-stone-600 bg-stone-100">
-        <i data-lucide="radio" class="w-3.5 h-3.5"></i>
-        <span>Transmissão</span>
       </button>
     </div>
   </header>
@@ -579,237 +513,6 @@
     </section>
 
     <!-- ==================== VIEW 4: COMUNHÃO (OVERLAY NATIVO OBS STUDIO) ==================== -->
-    <section id="view-comunhao" class="hidden space-y-6">
-      <!-- Top Bar -->
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-stone-200 shadow-sm">
-        <div>
-          <span class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full mb-1.5">
-            <i data-lucide="radio" class="w-3.5 h-3.5"></i> Overlay Nativo para OBS Studio
-          </span>
-          <h2 class="text-xl sm:text-2xl font-extrabold text-stone-900">Transmissão — Controle de GC Ao Vivo</h2>
-          <p class="text-sm text-stone-500 mt-0.5">Controle o aparecimento e ocultação dos textos na transmissão do OBS Studio com animação fluida e leituras automáticas.</p>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-2">
-          <input id="comunhao-date-picker" type="date" aria-label="Data das leituras para o overlay" class="px-3 py-2.5 rounded-xl border border-stone-200 text-sm font-medium text-stone-800 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-slate-900/20">
-          <button id="btn-comunhao-sync-all" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold shadow-sm transition">
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-            <span>Atualizar Leituras</span>
-          </button>
-          <button id="btn-obs-copy-url" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-sm font-semibold text-stone-700 transition">
-            <i data-lucide="link" class="w-4 h-4"></i>
-            <span>Copiar URL OBS</span>
-          </button>
-          <button id="btn-obs-fullscreen-output" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold shadow-sm transition">
-            <i data-lucide="monitor-play" class="w-4 h-4"></i>
-            <span>Saída Limpa OBS</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Studio Grid -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        <!-- Left: Playlist / Readings & Priests Deck (5 cols) -->
-        <div class="lg:col-span-5 space-y-4">
-          <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-3.5">
-            <!-- Sub-tabs: Leituras vs Padres -->
-            <div class="flex items-center gap-1 bg-stone-100 p-1 rounded-xl">
-              <button id="subtab-obs-leituras" type="button" data-obs-subtab="leituras" class="obs-subtab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold bg-slate-900 text-white shadow-xs transition flex items-center justify-center gap-1.5">
-                <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
-                <span>Leituras do Dia</span>
-              </button>
-              <button id="subtab-obs-padres" type="button" data-obs-subtab="padres" class="obs-subtab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold text-stone-600 hover:text-stone-900 transition flex items-center justify-center gap-1.5">
-                <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
-                <span>Padres (<span id="obs-priests-count">0</span>)</span>
-              </button>
-            </div>
-
-            <!-- Panel A: Leituras do Dia -->
-            <div id="obs-panel-leituras" class="space-y-3">
-              <div class="flex items-center justify-between gap-2">
-                <p id="comunhao-celebration" class="text-xs text-stone-500 truncate">Carregando liturgia...</p>
-                <button id="btn-obs-add-custom-card" type="button" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-xs font-bold text-stone-700 transition shrink-0">
-                  <i data-lucide="plus" class="w-3.5 h-3.5"></i> Novo Card
-                </button>
-              </div>
-              <div id="comunhao-readings-list" class="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
-                <!-- Populated by JS -->
-              </div>
-            </div>
-
-            <!-- Panel B: Cartões de Padres (Meio Inferior) -->
-            <div id="obs-panel-padres" class="hidden space-y-3">
-              <p class="text-xs text-stone-500">Os cartões de padre surgem automaticamente no <strong>meio inferior</strong> da transmissão.</p>
-
-              <form id="form-add-priest" class="p-3 rounded-xl bg-stone-50 border border-stone-200 space-y-2">
-                <input id="input-priest-name" type="text" required placeholder="Nome do padre (ex.: Pe. Nome Sobrenome)" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 bg-white text-xs font-semibold text-stone-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20">
-                <div class="flex gap-2">
-                  <input id="input-priest-role" type="text" placeholder="Cargo (ex.: Pároco, Vigário, Celebrante)" class="flex-1 px-2.5 py-1.5 rounded-lg border border-stone-200 bg-white text-xs text-stone-700 focus:outline-none focus:ring-2 focus:ring-slate-900/20">
-                  <button type="submit" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition shrink-0">Adicionar</button>
-                </div>
-              </form>
-
-              <div id="obs-priests-list" class="space-y-2.5 max-h-[420px] overflow-y-auto pr-1">
-                <!-- Populated by JS -->
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Live Program Monitor + On-Air Controls (7 cols) -->
-        <div class="lg:col-span-7 space-y-4">
-          <!-- Program Monitor Card -->
-          <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
-            <div class="px-4 py-3 border-b border-stone-100 bg-stone-50/70 flex flex-wrap items-center justify-between gap-2">
-              <div class="flex items-center gap-2.5">
-                <span id="obs-tally-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold tracking-wide bg-stone-200 text-stone-600 transition">
-                  <span id="obs-tally-dot" class="w-2 h-2 rounded-full bg-stone-400"></span>
-                  <span id="obs-tally-text">FORA DO AR</span>
-                </span>
-                <span class="text-xs font-semibold text-stone-500">Prévia 16:9 (1920×1080)</span>
-              </div>
-
-              <!-- Preview Backdrop Switcher -->
-              <div class="flex items-center gap-1 bg-stone-200/70 p-0.5 rounded-lg text-[11px] font-semibold">
-                <button type="button" data-preview-bg="dark" class="obs-bg-btn px-2 py-1 rounded-md bg-white text-stone-900 shadow-xs">Câmera</button>
-                <button type="button" data-preview-bg="transparent" class="obs-bg-btn px-2 py-1 rounded-md text-stone-600">Transparente</button>
-                <button type="button" data-preview-bg="chroma" class="obs-bg-btn px-2 py-1 rounded-md text-stone-600">Chroma</button>
-              </div>
-            </div>
-
-            <!-- 16:9 Live Preview Stage -->
-            <div id="obs-preview-stage" class="relative w-full aspect-video overflow-hidden select-none" style="background: radial-gradient(circle at 60% 35%, #334155 0%, #0F172A 100%);">
-              <!-- Live Animated Lower-Third Inside Preview -->
-              <div id="obs-preview-anchor" class="absolute inset-0 p-4 sm:p-5 flex items-end justify-start pointer-events-none">
-                <div id="obs-preview-scale-wrap" class="max-w-[68%] transition-transform duration-200" style="transform: scale(1); transform-origin: bottom left;">
-                <div id="obs-preview-card" class="broadcast-card anim-slide is-hidden flex items-stretch rounded-lg overflow-hidden shadow-xl border border-white/15" style="background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(12px);">
-                  <div id="obs-preview-bar" class="lt-bar w-1.5 shrink-0" style="background: #16A34A;"></div>
-                  <div id="obs-preview-content" class="lt-content px-3 py-2 sm:px-3.5 sm:py-2.5 min-w-0">
-                    <div id="obs-preview-header" class="flex items-center gap-1.5 mb-0.5">
-                      <span id="obs-preview-tag" class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider text-white" style="background: #16A34A;">1ª LEITURA</span>
-                      <span class="text-[9px] font-semibold uppercase tracking-wider text-slate-300/90 truncate">Paróquia São Pedro</span>
-                    </div>
-                    <p id="obs-preview-title" class="text-xs sm:text-sm font-extrabold text-white leading-snug truncate">Ez 34,11-12.15-17</p>
-                    <p id="obs-preview-sub" class="text-[10px] sm:text-xs font-normal text-slate-200/90 mt-0.5 line-clamp-1">Leitura da Profecia de Ezequiel</p>
-                  </div>
-                  <div id="obs-preview-bottom-bar" class="hidden h-1.5 w-full shrink-0" style="background: #16A34A;"></div>
-                </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Big On-Air / Off-Air & Settings Controls -->
-            <div class="p-4 sm:p-5 space-y-4 border-t border-stone-100">
-              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                <button id="btn-obs-toggle-air" type="button" class="flex-1 inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-extrabold shadow-sm transition">
-                  <i data-lucide="play" class="w-4 h-4"></i>
-                  <span id="btn-obs-toggle-text">COLOCAR NO AR</span>
-                </button>
-                <button id="btn-obs-next-card" type="button" class="inline-flex items-center justify-center gap-1.5 py-3 px-4 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 text-sm font-bold transition">
-                  <span>Próximo Card</span>
-                  <i data-lucide="skip-forward" class="w-4 h-4"></i>
-                </button>
-              </div>
-
-              <!-- Separated Settings Switcher: Leituras vs Padres -->
-              <div class="pt-3 border-t border-stone-100 space-y-3">
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <span class="text-xs font-extrabold uppercase tracking-wider text-stone-600 flex items-center gap-1.5">
-                    <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-slate-700"></i>
-                    <span id="obs-cfg-heading">Configuração: Leituras do Dia</span>
-                  </span>
-                  <div class="flex items-center gap-1 bg-stone-100 p-0.5 rounded-lg text-[11px] font-bold">
-                    <button type="button" data-obs-cfg-tab="leituras" class="obs-cfg-tab-btn px-2.5 py-1 rounded-md bg-slate-900 text-white transition">Leituras</button>
-                    <button type="button" data-obs-cfg-tab="padres" class="obs-cfg-tab-btn px-2.5 py-1 rounded-md text-stone-600 hover:text-stone-900 transition">Padres</button>
-                  </div>
-                </div>
-
-                <!-- Style, Position, Color & Auto-Hide Controls -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">Cor Litúrgica</label>
-                  <select id="obs-color-select" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 text-xs font-semibold text-stone-800 bg-white">
-                    <option value="amarelo">Amarelo (Branco)</option>
-                    <option value="verde" selected>Verde</option>
-                    <option value="roxo">Roxo</option>
-                    <option value="vermelho">Vermelho</option>
-                    <option value="azul">Azul</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">Animação</label>
-                  <select id="obs-anim-select" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 text-xs font-semibold text-stone-800 bg-white">
-                    <option value="slide">Deslizar Lateral</option>
-                    <option value="fadeup">Subir Suave</option>
-                    <option value="wipe">Revelar (Wipe)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">Posição</label>
-                  <select id="obs-pos-select" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 text-xs font-semibold text-stone-800 bg-white">
-                    <option value="bottom-left">Inferior Esq.</option>
-                    <option value="bottom-center">Inferior Centro</option>
-                    <option value="top-left">Superior Esq.</option>
-                    <option value="top-right">Superior Dir.</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-500 mb-1">Auto-Ocultar</label>
-                  <select id="obs-autohide-select" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 text-xs font-semibold text-stone-800 bg-white">
-                    <option value="0">Manual</option>
-                    <option value="8">8 segundos</option>
-                    <option value="15">15 segundos</option>
-                    <option value="30">30 segundos</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Card Size (%) Slider -->
-              <div class="pt-2 border-t border-stone-100 space-y-1">
-                <div class="flex items-center justify-between text-xs font-semibold text-stone-600">
-                  <label for="obs-scale-slider">Tamanho do Card na Transmissão</label>
-                  <div class="flex items-center gap-2">
-                    <span id="obs-scale-value" class="font-extrabold text-slate-900">100%</span>
-                    <button id="btn-obs-scale-reset" type="button" class="text-[11px] font-semibold text-indigo-700 hover:underline">100%</button>
-                  </div>
-                </div>
-                <input id="obs-scale-slider" type="range" min="50" max="150" step="5" value="100" class="w-full accent-slate-900 cursor-pointer">
-              </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- OBS Studio Local Plugin Bridge & GitHub Config -->
-          <div class="bg-stone-50 rounded-2xl border border-stone-200 p-4 space-y-3">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-700 flex items-center gap-1.5">
-                <i data-lucide="plug-zap" class="w-3.5 h-3.5 text-slate-700"></i> Plugin Local do OBS Studio (via GitHub Pages)
-              </h4>
-              <span id="obs-plugin-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-stone-200 text-stone-600">
-                <span id="obs-plugin-status-dot" class="w-2 h-2 rounded-full bg-stone-400"></span>
-                <span id="obs-plugin-status-text">Plugin OBS Offline</span>
-              </span>
-            </div>
-            <div class="flex flex-wrap items-center gap-2">
-              <button id="btn-obs-export-github-json" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition">
-                <i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar obs-config.json (p/ GitHub)
-              </button>
-              <button id="btn-obs-plugin-reconnect" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-100 text-stone-700 text-xs font-semibold transition">
-                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Testar Plugin OBS
-              </button>
-              <button id="btn-obs-pull-repo-json" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-stone-300 bg-white hover:bg-stone-100 text-stone-700 text-xs font-semibold transition">
-                <i data-lucide="git-branch" class="w-3.5 h-3.5"></i> Recarregar do GitHub
-              </button>
-            </div>
-            <ol class="text-xs text-stone-600 space-y-1 list-decimal list-inside">
-              <li>Instale <code>pascom_obs_github.py</code> em <strong>Ferramentas → Scripts</strong> no OBS Studio e informe a URL deste site no GitHub Pages.</li>
-              <li>Com o OBS aberto neste PC, o site conecta automaticamente na ponte local (<code>127.0.0.1:47890</code>) e envia o GC ao vivo sem precisar de Firebase.</li>
-              <li>Para salvar novas configurações padrão direto no repositório, clique em <strong>Baixar obs-config.json</strong> e substitua o arquivo na raiz do GitHub — o plugin do OBS lerá automaticamente.</li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </section>
 
   </main>
 
@@ -1166,7 +869,7 @@
           </div>
           <div>
             <h3 class="text-base font-extrabold text-stone-900">Nuvem Grátis & Backup (GitHub Pages)</h3>
-            <p class="text-xs text-stone-500">Compartilhe escala, artes e controle remoto do OBS entre dispositivos.</p>
+            <p class="text-xs text-stone-500">Compartilhe a escala dominical e as pendências de artes entre dispositivos.</p>
           </div>
         </div>
         <button id="btn-close-cloud-modal" type="button" class="p-1.5 rounded-lg hover:bg-stone-100 text-stone-500">
@@ -1182,7 +885,7 @@
             <span id="cloud-modal-badge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-stone-600">Modo Local</span>
           </div>
           <p class="text-xs text-stone-600 leading-relaxed">
-            Como o <strong>GitHub Pages</strong> hospeda sites estáticos (sem PHP), você pode colar abaixo a URL do seu <strong>Firebase Realtime Database</strong> gratuito para sincronizar a escala, artes e o GC do OBS pelo celular em tempo real.
+            Como o <strong>GitHub Pages</strong> hospeda sites estáticos (sem PHP), você pode colar abaixo a URL do seu <strong>Firebase Realtime Database</strong> gratuito para sincronizar a escala e as pendências de artes entre dispositivos em tempo real.
           </p>
           <div>
             <label for="input-cloud-url" class="block text-xs font-bold text-stone-700 mb-1">URL do Firebase Realtime Database</label>
@@ -1204,7 +907,7 @@
         <!-- Manual Export / Import Backup -->
         <div class="p-4 rounded-xl bg-white border border-stone-200 space-y-3">
           <h4 class="text-xs font-extrabold uppercase tracking-wider text-stone-700">Backup Rápido (Arquivo JSON)</h4>
-          <p class="text-xs text-stone-500">Salve uma cópia da escala, agentes, artes e padres para enviar no WhatsApp da equipe ou restaurar em outro aparelho.</p>
+          <p class="text-xs text-stone-500">Salve uma cópia da escala, agentes e artes para enviar no WhatsApp da equipe ou restaurar em outro aparelho.</p>
           <div class="flex flex-wrap gap-2">
             <button type="button" id="btn-export-backup" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition">
               <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar Backup (.json)
@@ -1224,28 +927,6 @@
     <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
     <span id="toast-msg">Salvo com sucesso!</span>
   </div>
-
-  <!-- Dedicated Full-Screen Transparent OBS Output Layer (active in #obs mode or Clean Output mode) -->
-  <div id="obs-output-stage" class="hidden fixed inset-0 z-[100] pointer-events-none">
-    <button id="btn-exit-clean-obs" type="button" class="hidden pointer-events-auto fixed top-4 right-4 z-[110] px-3 py-1.5 rounded-lg bg-black/60 hover:bg-black/80 text-white text-xs font-bold backdrop-blur">
-      Sair do Modo OBS (ESC)
-    </button>
-    <div id="obs-live-anchor" class="w-full h-full p-8 sm:p-12 flex items-end justify-start">
-      <div id="obs-live-scale-wrap" class="max-w-[680px] transition-transform duration-200" style="transform: scale(1); transform-origin: bottom left;">
-      <div id="obs-live-card" class="broadcast-card anim-slide is-hidden flex items-stretch rounded-xl overflow-hidden shadow-2xl border border-white/20" style="background: rgba(15, 23, 42, 0.90); backdrop-filter: blur(14px);">
-        <div id="obs-live-bar" class="lt-bar w-2 shrink-0" style="background: #16A34A;"></div>
-        <div id="obs-live-content" class="lt-content px-5 py-3.5 min-w-0">
-          <div id="obs-live-header" class="flex items-center gap-2.5 mb-1">
-            <span id="obs-live-tag" class="px-2.5 py-0.5 rounded text-[11px] font-extrabold uppercase tracking-wider text-white" style="background: #16A34A;">1ª LEITURA</span>
-            <span class="text-[11px] font-semibold uppercase tracking-widest text-slate-300">Paróquia São Pedro • Itapetim</span>
-          </div>
-          <p id="obs-live-title" class="text-lg sm:text-2xl font-extrabold text-white leading-snug">Ez 34,11-12.15-17</p>
-          <p id="obs-live-sub" class="text-xs sm:text-base font-normal text-slate-200/95 mt-0.5">Leitura da Profecia de Ezequiel</p>
-        </div>
-        <div id="obs-live-bottom-bar" class="hidden h-2 w-full shrink-0" style="background: #16A34A;"></div>
-      </div>
-      </div>
-    </div>
   </div>
 
   <script>
@@ -1424,7 +1105,6 @@
           if (!parsed.schedules) parsed.schedules = {};
           if (!parsed.customMasses) parsed.customMasses = [];
           if (!parsed.arts) parsed.arts = [];
-          if (!parsed.priests) parsed.priests = [];
           return parsed;
         }
       } catch (e) {}
@@ -1433,8 +1113,6 @@
         schedules: {},     // { 'YYYY-MM-DD': { colorOverride?: string, m09: {...}, m19: {...}, custom_<id>: {...} } }
         customMasses: [],  // [{ id, dateKey, timeLabel, title }]
         arts: [],
-        priests: [],       // [{ id, name, role }]
-        obsConfig: null,
         schedulePassword: ''
       };
     }
@@ -1510,13 +1188,7 @@
           state.schedules = (data.schedules && typeof data.schedules === 'object' && !Array.isArray(data.schedules)) ? data.schedules : {};
           state.customMasses = Array.isArray(data.customMasses) ? data.customMasses : [];
           state.arts = Array.isArray(data.arts) ? data.arts : [];
-          state.priests = Array.isArray(data.priests) ? data.priests : [];
           if (data.schedulePassword) state.schedulePassword = data.schedulePassword;
-          if (data.obsConfig && typeof data.obsConfig === 'object') {
-            state.obsConfig = data.obsConfig;
-            obsDeck.config.leituras = { ...defaultObsConfigs.leituras, ...(data.obsConfig.leituras || {}) };
-            obsDeck.config.padres = { ...defaultObsConfigs.padres, ...(data.obsConfig.padres || {}) };
-          }
           try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
           if (!silent) showToast('Dados sincronizados da nuvem!');
           return true;
@@ -1649,7 +1321,7 @@
     // ==================== NAVIGATION ====================
     function switchTab(tab) {
       activeTab = tab;
-      ['calendario', 'artes', 'sobreposicao', 'comunhao'].forEach(t => {
+      ['calendario', 'artes', 'sobreposicao'].forEach(t => {
         document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tab);
       });
 
@@ -1668,9 +1340,6 @@
 
       if (tab === 'sobreposicao') {
         renderOverlayCanvas();
-      }
-      if (tab === 'comunhao') {
-        loadComunhaoLiturgy(document.getElementById('comunhao-date-picker').value || toDateKey(today));
       }
       lucide.createIcons();
     }
@@ -3625,719 +3294,6 @@
       switchTab('sobreposicao');
     });
 
-    // ==================== MODULE 4: COMUNHÃO (NATIVE OBS BROADCAST ENGINE) ====================
-    const OBS_STATE_KEY = 'pascom_obs_live_state_v1';
-    const OBS_COLORS = {
-      amarelo: '#D99B00',
-      verde: '#16A34A',
-      roxo: '#7E22CE',
-      vermelho: '#DC2626',
-      azul: '#2563EB'
-    };
-
-    let obsChannel = null;
-    try {
-      if (typeof BroadcastChannel !== 'undefined') {
-        obsChannel = new BroadcastChannel('pascom_obs_overlay_channel');
-      }
-    } catch (e) {}
-
-    const defaultObsConfigs = {
-      leituras: { color: 'verde', anim: 'slide', pos: 'bottom-left', scalePercent: 100, autoHideSec: 0 },
-      padres:   { color: 'verde', anim: 'fadeup', pos: 'bottom-center', scalePercent: 100, autoHideSec: 0 }
-    };
-
-    const obsDeck = {
-      cards: [],
-      selectedIndex: 0,
-      activeSource: 'leituras', // 'leituras' | 'padres'
-      selectedPriestId: null,
-      subtab: 'leituras',
-      editingConfigTab: 'leituras', // which settings profile is shown in the controls
-      onAir: false,
-      config: {
-        leituras: { ...defaultObsConfigs.leituras, ...((state.obsConfig && state.obsConfig.leituras) || {}) },
-        padres:   { ...defaultObsConfigs.padres,   ...((state.obsConfig && state.obsConfig.padres) || {}) }
-      },
-      autoHideTimer: null,
-      previewBg: 'dark'
-    };
-
-    function persistObsConfig() {
-      state.obsConfig = {
-        leituras: { ...obsDeck.config.leituras },
-        padres: { ...obsDeck.config.padres }
-      };
-      saveState();
-    }
-
-    function syncConfigControlsToUI() {
-      const target = obsDeck.editingConfigTab;
-      const cfg = obsDeck.config[target];
-      document.getElementById('obs-cfg-heading').textContent =
-        target === 'padres' ? 'Configuração: Cartões de Padres' : 'Configuração: Leituras do Dia';
-
-      document.querySelectorAll('.obs-cfg-tab-btn').forEach(btn => {
-        const active = btn.dataset.obsCfgTab === target;
-        btn.classList.toggle('bg-slate-900', active);
-        btn.classList.toggle('text-white', active);
-        btn.classList.toggle('text-stone-600', !active);
-      });
-
-      document.getElementById('obs-color-select').value = cfg.color;
-      document.getElementById('obs-anim-select').value = cfg.anim;
-      document.getElementById('obs-pos-select').value = cfg.pos;
-      document.getElementById('obs-autohide-select').value = String(cfg.autoHideSec || 0);
-      document.getElementById('obs-scale-slider').value = cfg.scalePercent;
-      document.getElementById('obs-scale-value').textContent = `${cfg.scalePercent}%`;
-    }
-
-    function getActiveObsPayload() {
-      if (obsDeck.activeSource === 'padres') {
-        const cfg = obsDeck.config.padres;
-        const p = (state.priests || []).find(x => x.id === obsDeck.selectedPriestId);
-        return {
-          onAir: obsDeck.onAir,
-          isPriest: true,
-          tag: '',
-          title: (p && p.name) ? p.name : 'Celebrante',
-          sub: (p && p.role) ? p.role : 'Celebrante',
-          color: cfg.color,
-          anim: cfg.anim,
-          pos: cfg.pos,
-          scalePercent: cfg.scalePercent,
-          ts: Date.now()
-        };
-      }
-      const cfg = obsDeck.config.leituras;
-      const card = obsDeck.cards[obsDeck.selectedIndex] || { label: 'TRANSMISSÃO', ref: 'Paróquia São Pedro', sub: 'Itapetim - PE' };
-      return {
-        onAir: obsDeck.onAir,
-        isPriest: false,
-        tag: card.label || '',
-        title: card.ref || '',
-        sub: card.sub || '',
-        color: cfg.color,
-        anim: cfg.anim,
-        pos: cfg.pos,
-        scalePercent: cfg.scalePercent,
-        ts: Date.now()
-      };
-    }
-
-    function applyBroadcastVisual(prefix, payload, animateSwap = false) {
-      const anchor = document.getElementById(`${prefix}-anchor`);
-      const scaleWrap = document.getElementById(`${prefix}-scale-wrap`);
-      const card = document.getElementById(`${prefix}-card`);
-      const bar = document.getElementById(`${prefix}-bar`);
-      const bottomBar = document.getElementById(`${prefix}-bottom-bar`);
-      const contentEl = document.getElementById(`${prefix}-content`);
-      const headerEl = document.getElementById(`${prefix}-header`);
-      const tagEl = document.getElementById(`${prefix}-tag`);
-      const titleEl = document.getElementById(`${prefix}-title`);
-      const subEl = document.getElementById(`${prefix}-sub`);
-      if (!card || !anchor) return;
-
-      // Position alignment & scale origin
-      anchor.classList.remove('items-end', 'items-start', 'justify-start', 'justify-center', 'justify-end');
-      card.classList.remove('from-right');
-      let origin = 'bottom left';
-      if (payload.pos === 'bottom-center') {
-        anchor.classList.add('items-end', 'justify-center');
-        origin = 'bottom center';
-      } else if (payload.pos === 'top-left') {
-        anchor.classList.add('items-start', 'justify-start');
-        origin = 'top left';
-      } else if (payload.pos === 'top-right') {
-        anchor.classList.add('items-start', 'justify-end');
-        card.classList.add('from-right');
-        origin = 'top right';
-      } else {
-        anchor.classList.add('items-end', 'justify-start');
-        origin = 'bottom left';
-      }
-
-      if (scaleWrap) {
-        const pct = Number(payload.scalePercent) || 100;
-        scaleWrap.style.transformOrigin = origin;
-        scaleWrap.style.transform = `scale(${pct / 100})`;
-      }
-
-      // Animation style class
-      card.classList.remove('anim-slide', 'anim-fadeup', 'anim-wipe');
-      card.classList.add(`anim-${payload.anim || 'slide'}`);
-
-      const hex = OBS_COLORS[payload.color] || OBS_COLORS.verde;
-      const isPriest = Boolean(payload.isPriest);
-      const updateText = () => {
-        bar.style.background = hex;
-        if (bottomBar) bottomBar.style.background = hex;
-        tagEl.style.background = hex;
-        tagEl.textContent = (payload.tag || '').toUpperCase();
-        tagEl.classList.toggle('hidden', !payload.tag);
-        titleEl.textContent = payload.title || '';
-        subEl.textContent = payload.sub || '';
-        subEl.classList.toggle('hidden', !payload.sub);
-
-        // Layout switch: Priest (centered text, no badge/pill, bottom color stripe) vs Reading (side bar + tag)
-        card.classList.toggle('flex-col', isPriest);
-        bar.classList.toggle('hidden', isPriest);
-        if (bottomBar) bottomBar.classList.toggle('hidden', !isPriest);
-        if (headerEl) headerEl.classList.toggle('hidden', isPriest);
-        if (contentEl) {
-          contentEl.classList.toggle('text-center', isPriest);
-          contentEl.classList.toggle('px-6', isPriest);
-        }
-      };
-
-      if (animateSwap && payload.onAir && !card.classList.contains('is-hidden')) {
-        card.classList.add('is-swapping');
-        setTimeout(() => {
-          updateText();
-          card.classList.remove('is-swapping');
-        }, 170);
-      } else {
-        updateText();
-      }
-
-      // Trigger smooth enter / exit
-      card.classList.toggle('is-hidden', !payload.onAir);
-    }
-
-    function updateTallyUI() {
-      const badge = document.getElementById('obs-tally-badge');
-      const dot = document.getElementById('obs-tally-dot');
-      const text = document.getElementById('obs-tally-text');
-      const btn = document.getElementById('btn-obs-toggle-air');
-      const btnText = document.getElementById('btn-obs-toggle-text');
-      if (!badge || !btn) return;
-
-      if (obsDeck.onAir) {
-        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold tracking-wide bg-rose-100 text-rose-700 transition';
-        dot.className = 'w-2 h-2 rounded-full bg-rose-600 animate-pulse';
-        text.textContent = 'NO AR';
-        btn.className = 'flex-1 inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-sm font-extrabold shadow-sm transition';
-        btnText.textContent = 'TIRAR DO AR (OCULTAR)';
-      } else {
-        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-extrabold tracking-wide bg-stone-200 text-stone-600 transition';
-        dot.className = 'w-2 h-2 rounded-full bg-stone-400';
-        text.textContent = 'FORA DO AR';
-        btn.className = 'flex-1 inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-extrabold shadow-sm transition';
-        btnText.textContent = 'COLOCAR NO AR';
-      }
-    }
-
-    function broadcastObsState(animateSwap = false) {
-      const payload = getActiveObsPayload();
-
-      // Update local preview + live stage
-      applyBroadcastVisual('obs-preview', payload, animateSwap);
-      applyBroadcastVisual('obs-live', payload, animateSwap);
-      updateTallyUI();
-
-      // Sync to OBS Browser Source tabs / docks via BroadcastChannel + localStorage + Firebase Cloud (se configurado)
-      try { localStorage.setItem(OBS_STATE_KEY, JSON.stringify(payload)); } catch (e) {}
-      if (obsChannel) {
-        try { obsChannel.postMessage(payload); } catch (e) {}
-      }
-      const cloudBase = getCloudUrl();
-      if (cloudBase) {
-        fetch(`${cloudBase}/pascom_obs_live.json`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-          keepalive: true
-        }).catch(() => {});
-      }
-      // Push live state directly to local OBS Studio Plugin (pascom_obs_github.py)
-      pushToLocalObsPlugin('/api/state', payload);
-
-      // Handle optional auto-hide timer (per active profile)
-      const activeAutoHide = (obsDeck.config[obsDeck.activeSource] || obsDeck.config.leituras).autoHideSec || 0;
-      clearTimeout(obsDeck.autoHideTimer);
-      if (obsDeck.onAir && activeAutoHide > 0) {
-        obsDeck.autoHideTimer = setTimeout(() => {
-          obsDeck.onAir = false;
-          broadcastObsState(false);
-          renderComunhaoCards();
-          renderPriestsCards();
-        }, activeAutoHide * 1000);
-      }
-    }
-
-    function buildObsCardsFromLiturgy(litData, dateKey) {
-      const cards = [];
-      if (litData) {
-        cards.push({
-          id: 'obs_titulo',
-          label: 'Santa Missa',
-          ref: litData.celebration || `Santa Missa • ${formatDateBR(dateKey)}`,
-          sub: `${formatDateBR(dateKey)} • Paróquia São Pedro`
-        });
-        cards.push({
-          id: 'obs_primeira',
-          label: '1ª Leitura',
-          ref: litData.primeira?.ref || '1ª Leitura do Dia',
-          sub: litData.primeira?.sub || ''
-        });
-        cards.push({
-          id: 'obs_salmo',
-          label: 'Salmo Responsorial',
-          ref: litData.salmo?.ref || 'Salmo Responsorial',
-          sub: litData.salmo?.sub || ''
-        });
-        if (litData.segunda && litData.segunda.ref) {
-          cards.push({
-            id: 'obs_segunda',
-            label: '2ª Leitura',
-            ref: litData.segunda.ref,
-            sub: litData.segunda.sub || ''
-          });
-        }
-        cards.push({
-          id: 'obs_evangelho',
-          label: 'Evangelho',
-          ref: litData.evangelho?.ref || 'Evangelho do Dia',
-          sub: litData.evangelho?.sub || ''
-        });
-        cards.push({
-          id: 'obs_preces',
-          label: 'Preces da Comunidade',
-          ref: litData.preces?.ref || 'Preces da Comunidade',
-          sub: litData.preces?.sub || 'Senhor, escutai a nossa prece!'
-        });
-      }
-      cards.push({
-        id: 'obs_comunhao',
-        label: 'Comunhão',
-        ref: 'Sagrada Comunhão',
-        sub: 'Eis o Cordeiro de Deus, que tira o pecado do mundo.'
-      });
-      return cards;
-    }
-
-    function renderComunhaoCards() {
-      const container = document.getElementById('comunhao-readings-list');
-      if (!container) return;
-
-      container.innerHTML = obsDeck.cards.map((card, idx) => {
-        const isSelected = obsDeck.activeSource === 'leituras' && idx === obsDeck.selectedIndex;
-        const isLive = isSelected && obsDeck.onAir;
-        return `
-          <div class="p-3 rounded-xl border transition ${isLive ? 'bg-rose-50/70 border-rose-300 ring-1 ring-rose-200' : (isSelected ? 'bg-slate-50 border-slate-900' : 'bg-stone-50 border-stone-200/80')}">
-            <div class="flex items-center justify-between gap-2 mb-1.5">
-              <div class="flex items-center gap-1.5 min-w-0">
-                ${isLive ? '<span class="w-2 h-2 rounded-full bg-rose-600 animate-pulse shrink-0"></span>' : ''}
-                <input type="text" data-obs-field="label|${idx}" value="${escapeHTML(card.label)}" class="bg-transparent text-[11px] font-extrabold uppercase tracking-wide text-slate-800 w-36 focus:outline-none focus:bg-white focus:px-1.5 rounded">
-              </div>
-              <div class="flex items-center gap-1 shrink-0">
-                <button type="button" data-obs-fire="${idx}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition ${isLive ? 'bg-stone-900 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white'}">
-                  <i data-lucide="${isLive ? 'eye-off' : 'play'}" class="w-3 h-3"></i>
-                  <span>${isLive ? 'Ocultar' : 'Mostrar'}</span>
-                </button>
-                ${card.isCustom ? `
-                  <button type="button" data-obs-del="${idx}" title="Remover card" class="p-1 rounded-lg text-stone-400 hover:text-rose-600">
-                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                  </button>
-                ` : ''}
-              </div>
-            </div>
-            <div class="space-y-1">
-              <input type="text" data-obs-field="ref|${idx}" value="${escapeHTML(card.ref)}" placeholder="Título / Referência" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 bg-white text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20">
-              <input type="text" data-obs-field="sub|${idx}" value="${escapeHTML(card.sub)}" placeholder="Subtítulo / Refrão (opcional)" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 bg-white text-[11px] text-stone-600 focus:outline-none focus:ring-2 focus:ring-slate-900/20">
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      container.querySelectorAll('[data-obs-field]').forEach(inp => {
-        inp.addEventListener('input', () => {
-          const [field, idxStr] = inp.dataset.obsField.split('|');
-          const idx = Number(idxStr);
-          if (obsDeck.cards[idx]) {
-            obsDeck.cards[idx][field] = inp.value;
-            if (idx === obsDeck.selectedIndex) {
-              broadcastObsState(false);
-            }
-          }
-        });
-      });
-
-      container.querySelectorAll('[data-obs-fire]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const idx = Number(btn.dataset.obsFire);
-          if (obsDeck.activeSource === 'leituras' && obsDeck.selectedIndex === idx && obsDeck.onAir) {
-            obsDeck.onAir = false;
-            broadcastObsState(false);
-          } else {
-            const wasOnAir = obsDeck.onAir;
-            obsDeck.activeSource = 'leituras';
-            obsDeck.selectedIndex = idx;
-            obsDeck.onAir = true;
-            broadcastObsState(wasOnAir);
-          }
-          renderComunhaoCards();
-          renderPriestsCards();
-        });
-      });
-
-      container.querySelectorAll('[data-obs-del]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const idx = Number(btn.dataset.obsDel);
-          obsDeck.cards.splice(idx, 1);
-          if (obsDeck.selectedIndex >= obsDeck.cards.length) {
-            obsDeck.selectedIndex = Math.max(0, obsDeck.cards.length - 1);
-          }
-          renderComunhaoCards();
-          broadcastObsState(false);
-        });
-      });
-
-      lucide.createIcons();
-    }
-
-    async function loadComunhaoLiturgy(dateKey, forceReload = false) {
-      if (!dateKey) return;
-      document.getElementById('comunhao-celebration').textContent = 'Buscando liturgia do dia...';
-      await fetchDailyLiturgy(dateKey, forceReload);
-      const cached = overlayState.liturgyCache[dateKey] || overlayState.dailyLiturgy;
-      if (cached) {
-        document.getElementById('comunhao-celebration').textContent = cached.celebration || `Liturgia de ${formatDateBR(dateKey)}`;
-        if (cached.color && OBS_COLORS[cached.color]) {
-          obsDeck.config.leituras.color = cached.color;
-          syncConfigControlsToUI();
-        }
-      }
-      obsDeck.cards = buildObsCardsFromLiturgy(cached, dateKey);
-      obsDeck.selectedIndex = 0;
-      renderComunhaoCards();
-      renderPriestsCards();
-      broadcastObsState(false);
-    }
-
-    function renderPriestsCards() {
-      const list = state.priests || [];
-      const countEl = document.getElementById('obs-priests-count');
-      if (countEl) countEl.textContent = list.length;
-
-      const container = document.getElementById('obs-priests-list');
-      if (!container) return;
-
-      if (list.length === 0) {
-        container.innerHTML = `<p class="text-xs text-stone-400 text-center py-6">Nenhum padre cadastrado ainda. Adicione o nome acima para exibir no meio inferior da transmissão.</p>`;
-        return;
-      }
-
-      container.innerHTML = list.map(p => {
-        const isSelected = obsDeck.activeSource === 'padres' && obsDeck.selectedPriestId === p.id;
-        const isLive = isSelected && obsDeck.onAir;
-        return `
-          <div class="p-3 rounded-xl border transition ${isLive ? 'bg-rose-50/70 border-rose-300 ring-1 ring-rose-200' : (isSelected ? 'bg-slate-50 border-slate-900' : 'bg-stone-50 border-stone-200/80')}">
-            <div class="flex items-center justify-between gap-2 mb-1.5">
-              <div class="flex items-center gap-1.5 min-w-0">
-                ${isLive ? '<span class="w-2 h-2 rounded-full bg-rose-600 animate-pulse shrink-0"></span>' : ''}
-                <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">Meio Inferior</span>
-              </div>
-              <div class="flex items-center gap-1 shrink-0">
-                <button type="button" data-priest-fire="${p.id}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition ${isLive ? 'bg-stone-900 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white'}">
-                  <i data-lucide="${isLive ? 'eye-off' : 'play'}" class="w-3 h-3"></i>
-                  <span>${isLive ? 'Ocultar' : 'Mostrar'}</span>
-                </button>
-                <button type="button" data-priest-del="${p.id}" title="Remover padre" class="p-1 rounded-lg text-stone-400 hover:text-rose-600">
-                  <i data-lucide="x" class="w-3.5 h-3.5"></i>
-                </button>
-              </div>
-            </div>
-            <div class="space-y-1">
-              <input type="text" data-priest-edit="name|${p.id}" value="${escapeHTML(p.name)}" placeholder="Nome do padre" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 bg-white text-xs font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-slate-900/20">
-              <input type="text" data-priest-edit="role|${p.id}" value="${escapeHTML(p.role || '')}" placeholder="Cargo / Função (ex.: Pároco)" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 bg-white text-[11px] text-stone-600 focus:outline-none focus:ring-2 focus:ring-slate-900/20">
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      container.querySelectorAll('[data-priest-edit]').forEach(inp => {
-        inp.addEventListener('input', () => {
-          const [field, pid] = inp.dataset.priestEdit.split('|');
-          const p = (state.priests || []).find(x => x.id === pid);
-          if (p) {
-            p[field] = inp.value;
-            saveState();
-            if (obsDeck.activeSource === 'padres' && obsDeck.selectedPriestId === pid) {
-              broadcastObsState(false);
-            }
-          }
-        });
-      });
-
-      container.querySelectorAll('[data-priest-fire]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const pid = btn.dataset.priestFire;
-          if (obsDeck.activeSource === 'padres' && obsDeck.selectedPriestId === pid && obsDeck.onAir) {
-            obsDeck.onAir = false;
-            broadcastObsState(false);
-          } else {
-            const wasOnAir = obsDeck.onAir;
-            obsDeck.activeSource = 'padres';
-            obsDeck.selectedPriestId = pid;
-            obsDeck.onAir = true;
-            broadcastObsState(wasOnAir);
-          }
-          renderComunhaoCards();
-          renderPriestsCards();
-        });
-      });
-
-      container.querySelectorAll('[data-priest-del]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const pid = btn.dataset.priestDel;
-          state.priests = (state.priests || []).filter(x => x.id !== pid);
-          if (obsDeck.selectedPriestId === pid) {
-            obsDeck.selectedPriestId = null;
-            if (obsDeck.activeSource === 'padres') {
-              obsDeck.onAir = false;
-              broadcastObsState(false);
-            }
-          }
-          saveState();
-          renderPriestsCards();
-          showToast('Cartão de padre removido.');
-        });
-      });
-
-      lucide.createIcons();
-    }
-
-    function switchObsSubtab(sub) {
-      obsDeck.subtab = sub;
-      obsDeck.editingConfigTab = sub;
-      document.getElementById('obs-panel-leituras').classList.toggle('hidden', sub !== 'leituras');
-      document.getElementById('obs-panel-padres').classList.toggle('hidden', sub !== 'padres');
-      document.querySelectorAll('.obs-subtab-btn').forEach(btn => {
-        const active = btn.dataset.obsSubtab === sub;
-        btn.classList.toggle('bg-slate-900', active);
-        btn.classList.toggle('text-white', active);
-        btn.classList.toggle('shadow-xs', active);
-        btn.classList.toggle('text-stone-600', !active);
-      });
-      syncConfigControlsToUI();
-      lucide.createIcons();
-    }
-
-    document.querySelectorAll('.obs-subtab-btn').forEach(btn => {
-      btn.addEventListener('click', () => switchObsSubtab(btn.dataset.obsSubtab));
-    });
-
-    document.getElementById('form-add-priest').addEventListener('submit', e => {
-      e.preventDefault();
-      const nameInp = document.getElementById('input-priest-name');
-      const roleInp = document.getElementById('input-priest-role');
-      const name = nameInp.value.trim();
-      const role = roleInp.value.trim() || 'Celebrante';
-      if (!name) return;
-      if (!state.priests) state.priests = [];
-      state.priests.push({
-        id: 'pr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-        name,
-        role
-      });
-      saveState();
-      nameInp.value = '';
-      roleInp.value = '';
-      renderPriestsCards();
-      showToast(`Cartão de ${name} adicionado!`);
-    });
-
-    // OBS Control Listeners
-    document.getElementById('comunhao-date-picker').addEventListener('change', e => {
-      loadComunhaoLiturgy(e.target.value);
-    });
-
-    document.getElementById('btn-comunhao-sync-all').addEventListener('click', async () => {
-      const dateKey = document.getElementById('comunhao-date-picker').value || toDateKey(today);
-      await loadComunhaoLiturgy(dateKey, true);
-      showToast('Leituras do dia atualizadas na fila do overlay!');
-    });
-
-    document.getElementById('btn-obs-toggle-air').addEventListener('click', () => {
-      obsDeck.onAir = !obsDeck.onAir;
-      broadcastObsState(false);
-      renderComunhaoCards();
-      renderPriestsCards();
-    });
-
-    document.getElementById('btn-obs-next-card').addEventListener('click', () => {
-      if (obsDeck.cards.length === 0) return;
-      const wasOnAir = obsDeck.onAir;
-      obsDeck.selectedIndex = (obsDeck.selectedIndex + 1) % obsDeck.cards.length;
-      obsDeck.onAir = true;
-      broadcastObsState(wasOnAir);
-      renderComunhaoCards();
-    });
-
-    document.getElementById('btn-obs-add-custom-card').addEventListener('click', () => {
-      obsDeck.cards.push({
-        id: 'obs_custom_' + Date.now(),
-        label: 'Aviso Paroquial',
-        ref: 'Digite o título aqui',
-        sub: 'Paróquia São Pedro • Itapetim - PE',
-        isCustom: true
-      });
-      obsDeck.selectedIndex = obsDeck.cards.length - 1;
-      renderComunhaoCards();
-      broadcastObsState(obsDeck.onAir);
-      showToast('Novo card adicionado à fila!');
-    });
-
-    document.querySelectorAll('.obs-cfg-tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        obsDeck.editingConfigTab = btn.dataset.obsCfgTab;
-        syncConfigControlsToUI();
-      });
-    });
-
-    document.getElementById('obs-color-select').addEventListener('change', e => {
-      obsDeck.config[obsDeck.editingConfigTab].color = e.target.value;
-      persistObsConfig();
-      if (obsDeck.activeSource === obsDeck.editingConfigTab) broadcastObsState(false);
-    });
-    document.getElementById('obs-anim-select').addEventListener('change', e => {
-      obsDeck.config[obsDeck.editingConfigTab].anim = e.target.value;
-      persistObsConfig();
-      if (obsDeck.activeSource === obsDeck.editingConfigTab) broadcastObsState(false);
-    });
-    document.getElementById('obs-pos-select').addEventListener('change', e => {
-      obsDeck.config[obsDeck.editingConfigTab].pos = e.target.value;
-      persistObsConfig();
-      if (obsDeck.activeSource === obsDeck.editingConfigTab) broadcastObsState(false);
-    });
-    document.getElementById('obs-autohide-select').addEventListener('change', e => {
-      obsDeck.config[obsDeck.editingConfigTab].autoHideSec = Number(e.target.value) || 0;
-      persistObsConfig();
-      if (obsDeck.activeSource === obsDeck.editingConfigTab) broadcastObsState(false);
-    });
-    document.getElementById('obs-scale-slider').addEventListener('input', e => {
-      const val = Number(e.target.value) || 100;
-      obsDeck.config[obsDeck.editingConfigTab].scalePercent = val;
-      document.getElementById('obs-scale-value').textContent = `${val}%`;
-      persistObsConfig();
-      if (obsDeck.activeSource === obsDeck.editingConfigTab) broadcastObsState(false);
-    });
-    document.getElementById('btn-obs-scale-reset').addEventListener('click', () => {
-      obsDeck.config[obsDeck.editingConfigTab].scalePercent = 100;
-      document.getElementById('obs-scale-slider').value = 100;
-      document.getElementById('obs-scale-value').textContent = '100%';
-      persistObsConfig();
-      if (obsDeck.activeSource === obsDeck.editingConfigTab) broadcastObsState(false);
-    });
-
-    document.querySelectorAll('.obs-bg-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const bg = btn.dataset.previewBg;
-        obsDeck.previewBg = bg;
-        document.querySelectorAll('.obs-bg-btn').forEach(b => {
-          const active = b.dataset.previewBg === bg;
-          b.classList.toggle('bg-white', active);
-          b.classList.toggle('text-stone-900', active);
-          b.classList.toggle('shadow-xs', active);
-          b.classList.toggle('text-stone-600', !active);
-        });
-        const stage = document.getElementById('obs-preview-stage');
-        stage.classList.remove('canvas-stage');
-        if (bg === 'chroma') {
-          stage.style.background = '#00B140';
-        } else if (bg === 'transparent') {
-          stage.style.background = '';
-          stage.classList.add('canvas-stage');
-        } else {
-          stage.style.background = 'radial-gradient(circle at 60% 35%, #334155 0%, #0F172A 100%)';
-        }
-      });
-    });
-
-    document.getElementById('btn-obs-copy-url').addEventListener('click', () => {
-      const base = window.location.href.split('#')[0].split('?')[0];
-      const cloudBase = getCloudUrl();
-      const obsUrl = cloudBase ? `${base}?sync=${encodeURIComponent(cloudBase)}#obs` : `${base}#obs`;
-      copyTextToClipboard(obsUrl);
-    });
-
-    // Clean Fullscreen Output Mode (for direct capture or OBS Browser Source)
-    let obsCloudPoll = null;
-    let lastObsTs = 0;
-
-    async function pollObsFromCloud(animate = true) {
-      const cloudBase = getCloudUrl();
-      if (!cloudBase) return;
-      try {
-        const resp = await fetch(`${cloudBase}/pascom_obs_live.json`, { cache: 'no-store' });
-        if (!resp.ok) return;
-        const data = await resp.json();
-        if (data && typeof data === 'object') {
-          const ts = Number(data.ts) || 0;
-          if (ts !== lastObsTs) {
-            lastObsTs = ts;
-            applyBroadcastVisual('obs-live', data, animate);
-          }
-        }
-      } catch (e) {}
-    }
-
-    function enterCleanObsMode(showExitBtn = true) {
-      document.body.classList.add('obs-mode');
-      const stage = document.getElementById('obs-output-stage');
-      stage.classList.remove('hidden');
-      document.getElementById('btn-exit-clean-obs').classList.toggle('hidden', !showExitBtn);
-
-      // Load latest persisted local state immediately
-      try {
-        const saved = JSON.parse(localStorage.getItem(OBS_STATE_KEY) || 'null');
-        if (saved) {
-          lastObsTs = Number(saved.ts) || 0;
-          applyBroadcastVisual('obs-live', saved, false);
-        }
-      } catch (e) {}
-
-      // If Firebase Cloud URL is configured, poll live updates for remote phone control
-      clearInterval(obsCloudPoll);
-      if (getCloudUrl()) {
-        pollObsFromCloud(false);
-        obsCloudPoll = setInterval(() => pollObsFromCloud(true), 750);
-      }
-    }
-
-    function exitCleanObsMode() {
-      clearInterval(obsCloudPoll);
-      obsCloudPoll = null;
-      document.body.classList.remove('obs-mode');
-      document.getElementById('obs-output-stage').classList.add('hidden');
-      document.getElementById('btn-exit-clean-obs').classList.add('hidden');
-    }
-
-    document.getElementById('btn-obs-fullscreen-output').addEventListener('click', () => {
-      enterCleanObsMode(true);
-      broadcastObsState(false);
-    });
-    document.getElementById('btn-exit-clean-obs').addEventListener('click', exitCleanObsMode);
-    window.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && document.body.classList.contains('obs-mode') && window.location.hash !== '#obs') {
-        exitCleanObsMode();
-      }
-    });
-
-    // Real-time receiver for OBS Studio Browser Source (#obs)
-    if (obsChannel) {
-      obsChannel.onmessage = ev => {
-        if (ev.data) applyBroadcastVisual('obs-live', ev.data, true);
-      };
-    }
-    window.addEventListener('storage', ev => {
-      if (ev.key === OBS_STATE_KEY && ev.newValue) {
-        try {
-          applyBroadcastVisual('obs-live', JSON.parse(ev.newValue), true);
-        } catch (e) {}
-      }
-    });
 
     // ==================== CLOUD SYNC & BACKUP HANDLERS ====================
     document.getElementById('btn-open-cloud-sync').addEventListener('click', () => {
@@ -4360,8 +3316,6 @@
       if (pulled) {
         renderCalendar();
         renderArts();
-        renderPriestsCards();
-        syncConfigControlsToUI();
       } else {
         await pushStateToCloud();
         showToast('Nuvem conectada e dados locais enviados!');
@@ -4378,8 +3332,6 @@
       if (ok) {
         renderCalendar();
         renderArts();
-        renderPriestsCards();
-        syncConfigControlsToUI();
         lucide.createIcons();
       }
     });
@@ -4414,19 +3366,11 @@
           state.schedules = (parsed.schedules && typeof parsed.schedules === 'object') ? parsed.schedules : {};
           state.customMasses = Array.isArray(parsed.customMasses) ? parsed.customMasses : [];
           state.arts = Array.isArray(parsed.arts) ? parsed.arts : [];
-          state.priests = Array.isArray(parsed.priests) ? parsed.priests : [];
-          if (parsed.obsConfig) {
-            state.obsConfig = parsed.obsConfig;
-            obsDeck.config.leituras = { ...defaultObsConfigs.leituras, ...(parsed.obsConfig.leituras || {}) };
-            obsDeck.config.padres = { ...defaultObsConfigs.padres, ...(parsed.obsConfig.padres || {}) };
-          }
           if (parsed.schedulePassword) state.schedulePassword = parsed.schedulePassword;
           saveState();
           renderCalendar();
           renderArts();
-          renderPriestsCards();
-          syncConfigControlsToUI();
-          lucide.createIcons();
+              lucide.createIcons();
           document.getElementById('modal-cloud-sync').classList.add('hidden');
           showToast('Backup importado com sucesso!');
         } catch (err) {
@@ -4437,129 +3381,8 @@
       e.target.value = '';
     });
 
-    // ==================== LOCAL OBS STUDIO PLUGIN BRIDGE (GITHUB PAGES) ====================
-    const OBS_PLUGIN_BASE = 'http://127.0.0.1:47890';
-    let obsPluginConnected = false;
-
-    function updateObsPluginBadge(connected, label) {
-      obsPluginConnected = connected;
-      const badge = document.getElementById('obs-plugin-status-badge');
-      const dot = document.getElementById('obs-plugin-status-dot');
-      const text = document.getElementById('obs-plugin-status-text');
-      if (!badge || !dot || !text) return;
-      if (connected) {
-        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800';
-        dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
-        text.textContent = label || 'Plugin OBS Conectado';
-      } else {
-        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-stone-200 text-stone-600';
-        dot.className = 'w-2 h-2 rounded-full bg-stone-400';
-        text.textContent = label || 'Plugin OBS Offline';
-      }
-    }
-
-    function buildObsConfigExportPayload() {
-      return {
-        version: 1,
-        updatedAt: new Date().toISOString(),
-        obsConfig: {
-          leituras: { ...obsDeck.config.leituras },
-          padres: { ...obsDeck.config.padres }
-        },
-        priests: state.priests || [],
-        cards: obsDeck.cards || [],
-        live: getActiveObsPayload()
-      };
-    }
-
-    async function pushToLocalObsPlugin(endpoint, bodyObj) {
-      try {
-        const resp = await fetch(`${OBS_PLUGIN_BASE}${endpoint}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(bodyObj)
-        });
-        if (resp.ok) {
-          if (!obsPluginConnected) updateObsPluginBadge(true, 'Plugin OBS Conectado');
-          return true;
-        }
-      } catch (e) {}
-      return false;
-    }
-
-    async function checkLocalObsPlugin(silent = true) {
-      try {
-        const resp = await fetch(`${OBS_PLUGIN_BASE}/api/status`, { cache: 'no-store' });
-        if (resp.ok) {
-          updateObsPluginBadge(true, 'Plugin OBS Conectado');
-          pushToLocalObsPlugin('/api/config', buildObsConfigExportPayload());
-          if (!silent) showToast('Conectado ao plugin local do OBS Studio!');
-          return true;
-        }
-      } catch (e) {}
-      updateObsPluginBadge(false, 'Plugin OBS Offline');
-      if (!silent) showToast('Plugin local do OBS não detectado em 127.0.0.1:47890.', true);
-      return false;
-    }
-
-    async function loadObsConfigFromGitHubPages(forceApply = false) {
-      try {
-        const resp = await fetch(`./obs-config.json?t=${Date.now()}`, { cache: 'no-store' });
-        if (!resp.ok) return false;
-        const cfg = await resp.json();
-        if (!cfg || typeof cfg !== 'object') return false;
-        const hasLocalObs = Boolean(state.obsConfig && (state.obsConfig.leituras || state.obsConfig.padres));
-        if (forceApply || !hasLocalObs) {
-          if (cfg.obsConfig) {
-            state.obsConfig = cfg.obsConfig;
-            obsDeck.config.leituras = { ...defaultObsConfigs.leituras, ...(cfg.obsConfig.leituras || {}) };
-            obsDeck.config.padres = { ...defaultObsConfigs.padres, ...(cfg.obsConfig.padres || {}) };
-          }
-          if (Array.isArray(cfg.priests) && cfg.priests.length && (forceApply || !(state.priests && state.priests.length))) {
-            state.priests = cfg.priests;
-          }
-          saveState();
-          renderPriestsCards();
-          syncConfigControlsToUI();
-          if (forceApply) showToast('Configurações recarregadas de obs-config.json!');
-        }
-        return true;
-      } catch (e) {
-        if (forceApply) showToast('Não foi possível ler ./obs-config.json.', true);
-        return false;
-      }
-    }
-
-    const btnExportObsJson = document.getElementById('btn-obs-export-github-json');
-    if (btnExportObsJson) {
-      btnExportObsJson.addEventListener('click', () => {
-        const payload = buildObsConfigExportPayload();
-        const blob = new Blob([JSON.stringify(payload, null, 2) + '\n'], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'obs-config.json';
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        showToast('obs-config.json baixado! Envie para a raiz do seu repositório no GitHub.');
-      });
-    }
-    const btnReconnectObs = document.getElementById('btn-obs-plugin-reconnect');
-    if (btnReconnectObs) {
-      btnReconnectObs.addEventListener('click', () => checkLocalObsPlugin(false));
-    }
-    const btnPullRepoJson = document.getElementById('btn-obs-pull-repo-json');
-    if (btnPullRepoJson) {
-      btnPullRepoJson.addEventListener('click', () => loadObsConfigFromGitHubPages(true));
-    }
-
     // ==================== INITIALIZATION ====================
     async function init() {
-      const isObsMode = window.location.hash === '#obs' || new URLSearchParams(window.location.search).get('obs') === '1';
-      if (isObsMode) {
-        enterCleanObsMode(false);
-        return;
-      }
 
       const todayKey = toDateKey(today);
       const todayLit = getLiturgicalInfo(today);
@@ -4569,27 +3392,20 @@
       document.getElementById('today-liturgical-label').textContent = `Hoje: ${todayMeta.label}`;
 
       overlayDatePicker.value = todayKey;
-      document.getElementById('comunhao-date-picker').value = todayKey;
       applyDateLiturgicalColor(todayKey);
 
       updateCloudBadgeUI();
       updateScheduleLockUI();
       renderCalendar();
       renderArts();
-      syncConfigControlsToUI();
       lucide.createIcons();
-      loadObsConfigFromGitHubPages(false);
-      checkLocalObsPlugin(true);
-      setInterval(() => checkLocalObsPlugin(true), 12000);
 
       if (getCloudUrl()) {
         const pulled = await pullStateFromCloud(true);
         if (pulled) {
           renderCalendar();
           renderArts();
-          renderPriestsCards();
-          syncConfigControlsToUI();
-          lucide.createIcons();
+              lucide.createIcons();
         }
       }
     }
